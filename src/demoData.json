@@ -1,0 +1,582 @@
+{
+  "users": {
+    "admin001": {
+      "uid": "admin001",
+      "name": "Admin User",
+      "email": "admin@attendify.com",
+      "password": "admin123",
+      "role": "Admin",
+      "createdAt": "2025-01-01T00:00:00.000Z"
+    },
+    "emp001": {
+      "uid": "emp001",
+      "name": "Rahul Sharma",
+      "email": "rahul@attendify.com",
+      "password": "password123",
+      "role": "Employee",
+      "createdAt": "2025-06-15T00:00:00.000Z"
+    },
+    "emp002": {
+      "uid": "emp002",
+      "name": "Priya Patel",
+      "email": "priya@attendify.com",
+      "password": "password123",
+      "role": "Employee",
+      "createdAt": "2025-06-20T00:00:00.000Z"
+    },
+    "emp003": {
+      "uid": "emp003",
+      "name": "Amit Kumar",
+      "email": "amit@attendify.com",
+      "password": "password123",
+      "role": "Manager",
+      "createdAt": "2025-05-10T00:00:00.000Z"
+    },
+    "emp004": {
+      "uid": "emp004",
+      "name": "Sneha Gupta",
+      "email": "sneha@attendify.com",
+      "password": "password123",
+      "role": "Employee",
+      "createdAt": "2025-07-01T00:00:00.000Z"
+    },
+    "emp005": {
+      "uid": "emp005",
+      "name": "Vikram Singh",
+      "email": "vikram@attendify.com",
+      "password": "password123",
+      "role": "Employee",
+      "createdAt": "2025-08-15T00:00:00.000Z"
+    },
+    "emp006": {
+      "uid": "emp006",
+      "name": "Anjali Reddy",
+      "email": "anjali@attendify.com",
+      "password": "password123",
+      "role": "Employee",
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    "emp007": {
+      "uid": "emp007",
+      "name": "Karthik Nair",
+      "email": "karthik@attendify.com",
+      "password": "password123",
+      "role": "Intern",
+      "createdAt": "2025-10-01T00:00:00.000Z"
+    },
+    "emp008": {
+      "uid": "emp008",
+      "name": "Neha Joshi",
+      "email": "neha@attendify.com",
+      "password": "password123",
+      "role": "Employee",
+      "createdAt": "2025-06-25T00:00:00.000Z"
+    },
+    "emp009": {
+      "uid": "emp009",
+      "name": "Arjun Mehta",
+      "email": "arjun@attendify.com",
+      "password": "password123",
+      "role": "Employee",
+      "createdAt": "2025-07-10T00:00:00.000Z"
+    },
+    "emp010": {
+      "uid": "emp010",
+      "name": "Divya Krishnan",
+      "email": "divya@attendify.com",
+      "password": "password123",
+      "role": "Manager",
+      "createdAt": "2025-05-20T00:00:00.000Z"
+    }
+  },
+  "staff": [
+    {
+      "id": "staff001",
+      "uid": "emp001",
+      "name": "Rahul Sharma",
+      "email": "rahul@attendify.com",
+      "role": "Employee",
+      "phone": "+91 98765 43210",
+      "address": "123, MG Road, Bangalore",
+      "salary": "45000",
+      "bankDetails": {
+        "holderName": "Rahul Sharma",
+        "accountNo": "1234567890",
+        "ifsc": "HDFC0001234"
+      },
+      "ruleSetId": "default",
+      "attendanceLocationId": "loc001",
+      "joinedAt": "2025-06-15T00:00:00.000Z",
+      "status": "active",
+      "profileImage": null
+    },
+    {
+      "id": "staff002",
+      "uid": "emp002",
+      "name": "Priya Patel",
+      "email": "priya@attendify.com",
+      "role": "Employee",
+      "phone": "+91 98765 43211",
+      "address": "456, Indiranagar, Bangalore",
+      "salary": "42000",
+      "bankDetails": {
+        "holderName": "Priya Patel",
+        "accountNo": "2345678901",
+        "ifsc": "ICIC0002345"
+      },
+      "ruleSetId": "default",
+      "attendanceLocationId": "loc001",
+      "joinedAt": "2025-06-20T00:00:00.000Z",
+      "status": "active",
+      "profileImage": null
+    },
+    {
+      "id": "staff003",
+      "uid": "emp003",
+      "name": "Amit Kumar",
+      "email": "amit@attendify.com",
+      "role": "Manager",
+      "phone": "+91 98765 43212",
+      "address": "789, Koramangala, Bangalore",
+      "salary": "65000",
+      "bankDetails": {
+        "holderName": "Amit Kumar",
+        "accountNo": "3456789012",
+        "ifsc": "SBIN0003456"
+      },
+      "ruleSetId": "default",
+      "attendanceLocationId": "loc001",
+      "joinedAt": "2025-05-10T00:00:00.000Z",
+      "status": "active",
+      "profileImage": null
+    },
+    {
+      "id": "staff004",
+      "uid": "emp004",
+      "name": "Sneha Gupta",
+      "email": "sneha@attendify.com",
+      "role": "Employee",
+      "phone": "+91 98765 43213",
+      "address": "321, HSR Layout, Bangalore",
+      "salary": "40000",
+      "bankDetails": {
+        "holderName": "Sneha Gupta",
+        "accountNo": "4567890123",
+        "ifsc": "AXIS0004567"
+      },
+      "ruleSetId": "default",
+      "attendanceLocationId": "loc001",
+      "joinedAt": "2025-07-01T00:00:00.000Z",
+      "status": "active",
+      "profileImage": null
+    },
+    {
+      "id": "staff005",
+      "uid": "emp005",
+      "name": "Vikram Singh",
+      "email": "vikram@attendify.com",
+      "role": "Employee",
+      "phone": "+91 98765 43214",
+      "address": "654, Whitefield, Bangalore",
+      "salary": "48000",
+      "bankDetails": {
+        "holderName": "Vikram Singh",
+        "accountNo": "5678901234",
+        "ifsc": "HDFC0005678"
+      },
+      "ruleSetId": "night",
+      "attendanceLocationId": "loc002",
+      "joinedAt": "2025-08-15T00:00:00.000Z",
+      "status": "active",
+      "profileImage": null
+    },
+    {
+      "id": "staff006",
+      "uid": "emp006",
+      "name": "Anjali Reddy",
+      "email": "anjali@attendify.com",
+      "role": "Employee",
+      "phone": "+91 98765 43215",
+      "address": "987, Electronic City, Bangalore",
+      "salary": "44000",
+      "bankDetails": {
+        "holderName": "Anjali Reddy",
+        "accountNo": "6789012345",
+        "ifsc": "ICIC0006789"
+      },
+      "ruleSetId": "default",
+      "attendanceLocationId": "loc001",
+      "joinedAt": "2025-09-01T00:00:00.000Z",
+      "status": "active",
+      "profileImage": null
+    },
+    {
+      "id": "staff007",
+      "uid": "emp007",
+      "name": "Karthik Nair",
+      "email": "karthik@attendify.com",
+      "role": "Intern",
+      "phone": "+91 98765 43216",
+      "address": "147, Marathahalli, Bangalore",
+      "salary": "20000",
+      "bankDetails": {
+        "holderName": "Karthik Nair",
+        "accountNo": "7890123456",
+        "ifsc": "SBIN0007890"
+      },
+      "ruleSetId": "default",
+      "attendanceLocationId": "loc001",
+      "joinedAt": "2025-10-01T00:00:00.000Z",
+      "status": "active",
+      "profileImage": null
+    },
+    {
+      "id": "staff008",
+      "uid": "emp008",
+      "name": "Neha Joshi",
+      "email": "neha@attendify.com",
+      "role": "Employee",
+      "phone": "+91 98765 43217",
+      "address": "258, BTM Layout, Bangalore",
+      "salary": "43000",
+      "bankDetails": {
+        "holderName": "Neha Joshi",
+        "accountNo": "8901234567",
+        "ifsc": "AXIS0008901"
+      },
+      "ruleSetId": "default",
+      "attendanceLocationId": "loc001",
+      "joinedAt": "2025-06-25T00:00:00.000Z",
+      "status": "active",
+      "profileImage": null
+    },
+    {
+      "id": "staff009",
+      "uid": "emp009",
+      "name": "Arjun Mehta",
+      "email": "arjun@attendify.com",
+      "role": "Employee",
+      "phone": "+91 98765 43218",
+      "address": "369, Jayanagar, Bangalore",
+      "salary": "46000",
+      "bankDetails": {
+        "holderName": "Arjun Mehta",
+        "accountNo": "9012345678",
+        "ifsc": "HDFC0009012"
+      },
+      "ruleSetId": "default",
+      "attendanceLocationId": "loc001",
+      "joinedAt": "2025-07-10T00:00:00.000Z",
+      "status": "active",
+      "profileImage": null
+    },
+    {
+      "id": "staff010",
+      "uid": "emp010",
+      "name": "Divya Krishnan",
+      "email": "divya@attendify.com",
+      "role": "Manager",
+      "phone": "+91 98765 43219",
+      "address": "741, Sarjapur Road, Bangalore",
+      "salary": "62000",
+      "bankDetails": {
+        "holderName": "Divya Krishnan",
+        "accountNo": "0123456789",
+        "ifsc": "ICIC0000123"
+      },
+      "ruleSetId": "default",
+      "attendanceLocationId": "loc001",
+      "joinedAt": "2025-05-20T00:00:00.000Z",
+      "status": "active",
+      "profileImage": null
+    }
+  ],
+  "settings": {
+    "holidays": ["2026-01-01", "2026-01-26"],
+    "ruleSets": [
+      {
+        "id": "default",
+        "name": "General Shift",
+        "startTime": "09:00",
+        "endTime": "18:00",
+        "minHalfDay": 4,
+        "minFullDay": 8,
+        "weeklyOffs": ["Sunday"]
+      },
+      {
+        "id": "night",
+        "name": "Night Shift",
+        "startTime": "20:00",
+        "endTime": "05:00",
+        "minHalfDay": 4,
+        "minFullDay": 8,
+        "weeklyOffs": ["Sunday"]
+      }
+    ],
+    "locations": [
+      {
+        "id": "loc001",
+        "name": "Main Office - Bangalore",
+        "latitude": "12.9716",
+        "longitude": "77.5946",
+        "radiusMeters": 100
+      },
+      {
+        "id": "loc002",
+        "name": "Branch Office - Whitefield",
+        "latitude": "12.9698",
+        "longitude": "77.7500",
+        "radiusMeters": 150
+      }
+    ]
+  },
+  "attendance": {
+    "2026-01-02": {
+      "emp001": { "status": "present", "punchIn": "09:05:23", "punchOut": "18:12:45" },
+      "emp002": { "status": "present", "punchIn": "08:58:12", "punchOut": "18:05:33" },
+      "emp003": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:30:00" },
+      "emp004": { "status": "present", "punchIn": "09:10:45", "punchOut": "18:15:20" },
+      "emp005": { "status": "present", "punchIn": "20:02:00", "punchOut": "05:05:00" },
+      "emp006": { "status": "present", "punchIn": "09:03:22", "punchOut": "18:08:11" },
+      "emp007": { "status": "present", "punchIn": "09:15:00", "punchOut": "17:45:00" },
+      "emp008": { "status": "absent" },
+      "emp009": { "status": "present", "punchIn": "09:08:33", "punchOut": "18:20:45" },
+      "emp010": { "status": "present", "punchIn": "08:55:00", "punchOut": "18:45:00" }
+    },
+    "2026-01-03": {
+      "emp001": { "status": "present", "punchIn": "09:02:15", "punchOut": "18:10:30" },
+      "emp002": { "status": "present", "punchIn": "09:00:45", "punchOut": "18:00:00" },
+      "emp003": { "status": "present", "punchIn": "08:58:00", "punchOut": "18:25:00" },
+      "emp004": { "status": "late", "punchIn": "10:30:00", "punchOut": "18:30:00" },
+      "emp005": { "status": "present", "punchIn": "20:00:00", "punchOut": "05:00:00" },
+      "emp006": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp007": { "status": "present", "punchIn": "09:00:00", "punchOut": "17:30:00" },
+      "emp008": { "status": "present", "punchIn": "09:10:00", "punchOut": "18:15:00" },
+      "emp009": { "status": "absent" },
+      "emp010": { "status": "present", "punchIn": "08:50:00", "punchOut": "18:40:00" }
+    },
+    "2026-01-06": {
+      "emp001": { "status": "present", "punchIn": "09:00:10", "punchOut": "18:05:00" },
+      "emp002": { "status": "late", "punchIn": "10:15:00", "punchOut": "18:30:00" },
+      "emp003": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:20:00" },
+      "emp004": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp005": { "status": "present", "punchIn": "20:05:00", "punchOut": "05:10:00" },
+      "emp006": { "status": "absent" },
+      "emp007": { "status": "present", "punchIn": "09:10:00", "punchOut": "17:40:00" },
+      "emp008": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:00:00" },
+      "emp009": { "status": "present", "punchIn": "09:02:00", "punchOut": "18:08:00" },
+      "emp010": { "status": "present", "punchIn": "08:55:00", "punchOut": "18:35:00" }
+    },
+    "2026-01-07": {
+      "emp001": { "status": "present", "punchIn": "09:03:00", "punchOut": "18:08:00" },
+      "emp002": { "status": "present", "punchIn": "08:55:00", "punchOut": "18:02:00" },
+      "emp003": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:15:00" },
+      "emp004": { "status": "present", "punchIn": "09:08:00", "punchOut": "18:12:00" },
+      "emp005": { "status": "absent" },
+      "emp006": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp007": { "status": "late", "punchIn": "11:00:00", "punchOut": "17:00:00" },
+      "emp008": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp009": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:00:00" },
+      "emp010": { "status": "present", "punchIn": "08:50:00", "punchOut": "18:30:00" }
+    },
+    "2026-01-08": {
+      "emp001": { "status": "present", "punchIn": "09:01:00", "punchOut": "18:06:00" },
+      "emp002": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:00:00" },
+      "emp003": { "status": "present", "punchIn": "08:58:00", "punchOut": "18:10:00" },
+      "emp004": { "status": "absent" },
+      "emp005": { "status": "present", "punchIn": "20:00:00", "punchOut": "05:05:00" },
+      "emp006": { "status": "present", "punchIn": "09:02:00", "punchOut": "18:08:00" },
+      "emp007": { "status": "present", "punchIn": "09:05:00", "punchOut": "17:35:00" },
+      "emp008": { "status": "present", "punchIn": "09:08:00", "punchOut": "18:12:00" },
+      "emp009": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp010": { "status": "present", "punchIn": "08:52:00", "punchOut": "18:40:00" }
+    },
+    "2026-01-09": {
+      "emp001": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp002": { "status": "present", "punchIn": "09:02:00", "punchOut": "18:05:00" },
+      "emp003": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:25:00" },
+      "emp004": { "status": "present", "punchIn": "09:10:00", "punchOut": "18:15:00" },
+      "emp005": { "status": "present", "punchIn": "20:02:00", "punchOut": "05:08:00" },
+      "emp006": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:00:00" },
+      "emp007": { "status": "present", "punchIn": "09:08:00", "punchOut": "17:38:00" },
+      "emp008": { "status": "late", "punchIn": "10:45:00", "punchOut": "18:30:00" },
+      "emp009": { "status": "present", "punchIn": "09:03:00", "punchOut": "18:08:00" },
+      "emp010": { "status": "present", "punchIn": "08:55:00", "punchOut": "18:35:00" }
+    },
+    "2026-01-10": {
+      "emp001": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp002": { "status": "absent" },
+      "emp003": { "status": "present", "punchIn": "08:55:00", "punchOut": "18:20:00" },
+      "emp004": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp005": { "status": "present", "punchIn": "20:00:00", "punchOut": "05:00:00" },
+      "emp006": { "status": "present", "punchIn": "09:02:00", "punchOut": "18:08:00" },
+      "emp007": { "status": "present", "punchIn": "09:10:00", "punchOut": "17:40:00" },
+      "emp008": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:00:00" },
+      "emp009": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp010": { "status": "present", "punchIn": "08:50:00", "punchOut": "18:30:00" }
+    },
+    "2026-01-13": {
+      "emp001": { "status": "present", "punchIn": "09:02:00", "punchOut": "18:08:00" },
+      "emp002": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:02:00" },
+      "emp003": { "status": "present", "punchIn": "08:58:00", "punchOut": "18:15:00" },
+      "emp004": { "status": "present", "punchIn": "09:08:00", "punchOut": "18:12:00" },
+      "emp005": { "status": "present", "punchIn": "20:05:00", "punchOut": "05:10:00" },
+      "emp006": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp007": { "status": "absent" },
+      "emp008": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:08:00" },
+      "emp009": { "status": "late", "punchIn": "11:30:00", "punchOut": "18:30:00" },
+      "emp010": { "status": "present", "punchIn": "08:52:00", "punchOut": "18:40:00" }
+    },
+    "2026-01-14": {
+      "emp001": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp002": { "status": "present", "punchIn": "09:03:00", "punchOut": "18:08:00" },
+      "emp003": { "status": "absent" },
+      "emp004": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp005": { "status": "present", "punchIn": "20:00:00", "punchOut": "05:05:00" },
+      "emp006": { "status": "present", "punchIn": "09:02:00", "punchOut": "18:05:00" },
+      "emp007": { "status": "present", "punchIn": "09:08:00", "punchOut": "17:38:00" },
+      "emp008": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:00:00" },
+      "emp009": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp010": { "status": "present", "punchIn": "08:55:00", "punchOut": "18:35:00" }
+    },
+    "2026-01-15": {
+      "emp001": { "status": "late", "punchIn": "10:20:00", "punchOut": "18:20:00" },
+      "emp002": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:00:00" },
+      "emp003": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:20:00" },
+      "emp004": { "status": "present", "punchIn": "09:02:00", "punchOut": "18:08:00" },
+      "emp005": { "status": "present", "punchIn": "20:02:00", "punchOut": "05:08:00" },
+      "emp006": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp007": { "status": "present", "punchIn": "09:00:00", "punchOut": "17:30:00" },
+      "emp008": { "status": "absent" },
+      "emp009": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp010": { "status": "present", "punchIn": "08:50:00", "punchOut": "18:30:00" }
+    },
+    "2026-01-16": {
+      "emp001": { "status": "present", "punchIn": "09:03:00", "punchOut": "18:08:00" },
+      "emp002": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:02:00" },
+      "emp003": { "status": "present", "punchIn": "08:58:00", "punchOut": "18:15:00" },
+      "emp004": { "status": "present", "punchIn": "09:10:00", "punchOut": "18:15:00" },
+      "emp005": { "status": "absent" },
+      "emp006": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp007": { "status": "present", "punchIn": "09:05:00", "punchOut": "17:35:00" },
+      "emp008": { "status": "present", "punchIn": "09:08:00", "punchOut": "18:12:00" },
+      "emp009": { "status": "present", "punchIn": "09:02:00", "punchOut": "18:08:00" },
+      "emp010": { "status": "present", "punchIn": "08:52:00", "punchOut": "18:40:00" }
+    },
+    "2026-01-17": {
+      "emp001": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp002": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:08:00" },
+      "emp003": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:20:00" },
+      "emp004": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp005": { "status": "present", "punchIn": "20:00:00", "punchOut": "05:00:00" },
+      "emp006": { "status": "late", "punchIn": "10:30:00", "punchOut": "18:30:00" },
+      "emp007": { "status": "present", "punchIn": "09:10:00", "punchOut": "17:40:00" },
+      "emp008": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:00:00" },
+      "emp009": { "status": "absent" },
+      "emp010": { "status": "present", "punchIn": "08:55:00", "punchOut": "18:35:00" }
+    },
+    "2026-01-20": {
+      "emp001": { "status": "present", "punchIn": "09:02:00", "punchOut": "18:08:00" },
+      "emp002": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:02:00" },
+      "emp003": { "status": "present", "punchIn": "08:55:00", "punchOut": "18:15:00" },
+      "emp004": { "status": "absent" },
+      "emp005": { "status": "present", "punchIn": "20:05:00", "punchOut": "05:10:00" },
+      "emp006": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp007": { "status": "present", "punchIn": "09:08:00", "punchOut": "17:38:00" },
+      "emp008": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:08:00" },
+      "emp009": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp010": { "status": "present", "punchIn": "08:50:00", "punchOut": "18:30:00" }
+    },
+    "2026-01-21": {
+      "emp001": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp002": { "status": "present", "punchIn": "09:02:00", "punchOut": "18:05:00" },
+      "emp003": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:20:00" },
+      "emp004": { "status": "present", "punchIn": "09:08:00", "punchOut": "18:12:00" },
+      "emp005": { "status": "present", "punchIn": "20:00:00", "punchOut": "05:05:00" },
+      "emp006": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp007": { "status": "late", "punchIn": "10:00:00", "punchOut": "17:30:00" },
+      "emp008": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:00:00" },
+      "emp009": { "status": "present", "punchIn": "09:03:00", "punchOut": "18:08:00" },
+      "emp010": { "status": "absent" }
+    },
+    "2026-01-22": {
+      "emp001": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp002": { "status": "absent" },
+      "emp003": { "status": "present", "punchIn": "08:58:00", "punchOut": "18:15:00" },
+      "emp004": { "status": "present", "punchIn": "09:05:00", "punchOut": "18:10:00" },
+      "emp005": { "status": "present", "punchIn": "20:02:00", "punchOut": "05:08:00" },
+      "emp006": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp007": { "status": "present", "punchIn": "09:05:00", "punchOut": "17:35:00" },
+      "emp008": { "status": "present", "punchIn": "09:08:00", "punchOut": "18:12:00" },
+      "emp009": { "status": "present", "punchIn": "09:00:00", "punchOut": "18:05:00" },
+      "emp010": { "status": "present", "punchIn": "08:52:00", "punchOut": "18:40:00" }
+    },
+    "2026-01-23": {
+      "emp001": { "status": "present", "punchIn": "09:01:00", "punchOut": null },
+      "emp002": { "status": "present", "punchIn": "09:00:00", "punchOut": null },
+      "emp003": { "status": "present", "punchIn": "08:55:00", "punchOut": null },
+      "emp004": { "status": "present", "punchIn": "09:10:00", "punchOut": null },
+      "emp005": { "status": "absent" },
+      "emp006": { "status": "present", "punchIn": "09:02:00", "punchOut": null },
+      "emp007": { "status": "present", "punchIn": "09:08:00", "punchOut": null },
+      "emp008": { "status": "present", "punchIn": "09:05:00", "punchOut": null },
+      "emp009": { "status": "present", "punchIn": "09:00:00", "punchOut": null },
+      "emp010": { "status": "present", "punchIn": "08:50:00", "punchOut": null }
+    }
+  },
+  "missPunchRequests": [
+    {
+      "id": "mpr001",
+      "userId": "emp008",
+      "userEmail": "neha@attendify.com",
+      "date": "2026-01-02",
+      "punchType": "in",
+      "punchTime": "09:05:00",
+      "reason": "Forgot to punch in, was in a meeting",
+      "status": "approved",
+      "createdAt": "2026-01-02T18:00:00.000Z",
+      "approvedBy": "admin@attendify.com",
+      "approvedAt": "2026-01-03T10:00:00.000Z"
+    },
+    {
+      "id": "mpr002",
+      "userId": "emp009",
+      "userEmail": "arjun@attendify.com",
+      "date": "2026-01-03",
+      "punchType": "out",
+      "punchTime": "18:15:00",
+      "reason": "System was down, couldn't punch out",
+      "status": "approved",
+      "createdAt": "2026-01-04T09:00:00.000Z",
+      "approvedBy": "admin@attendify.com",
+      "approvedAt": "2026-01-04T11:00:00.000Z"
+    },
+    {
+      "id": "mpr003",
+      "userId": "emp007",
+      "userEmail": "karthik@attendify.com",
+      "date": "2026-01-13",
+      "punchType": "in",
+      "punchTime": "09:00:00",
+      "reason": "Was sick, worked from home",
+      "status": "rejected",
+      "createdAt": "2026-01-14T09:00:00.000Z",
+      "approvedBy": "admin@attendify.com",
+      "approvedAt": "2026-01-14T14:00:00.000Z",
+      "rejectionReason": "WFH not approved for that day"
+    },
+    {
+      "id": "mpr004",
+      "userId": "emp002",
+      "userEmail": "priya@attendify.com",
+      "date": "2026-01-22",
+      "punchType": "in",
+      "punchTime": "09:10:00",
+      "reason": "Phone battery died, couldn't punch",
+      "status": "pending",
+      "createdAt": "2026-01-22T18:30:00.000Z",
+      "approvedBy": null,
+      "approvedAt": null
+    }
+  ]
+}

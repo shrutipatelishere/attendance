@@ -1,0 +1,143 @@
+/* ===================
+   LEAD CARD CONTAINER
+   =================== */
+.lead-card {
+  background: #fff;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #e5e5e5;
+  overflow: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.lead-card:hover {
+  border-color: #3498db;
+  box-shadow: 0 2px 12px rgba(52, 152, 219, 0.15);
+  transform: translateY(-1px);
+}
+
+/* ===================
+   CARD HEADER
+   =================== */
+.lead-card-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 16px;
+}
+
+.lead-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.lead-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lead-info h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+
+.lead-service-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.lead-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.lead-subtitle .divider {
+  margin: 0 6px;
+  color: #ccc;
+}
+
+.lead-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lead-badges {
+  display: flex;
+  gap: 6px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.reminder-badge {
+  padding: 4px 10px;
+  background: #fff8e1;
+  color: #f57c00;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.reminder-badge.overdue {
+  background: #ffebee;
+  color: #d32f2f;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.6; }
+}
+
+.arrow-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 50%;
+  color: #666;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.lead-card:hover .arrow-icon {
+  background: #3498db;
+  color: #fff;
+}
+
+/* ===================
+   RESPONSIVE
+   =================== */
+@media (max-width: 500px) {
+  .lead-card-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .lead-meta {
+    order: 3;
+    width: 100%;
+  }
+
+  .arrow-icon {
+    order: 2;
+  }
+}
