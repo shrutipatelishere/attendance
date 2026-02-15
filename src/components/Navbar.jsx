@@ -53,7 +53,7 @@ const Navbar = () => {
                     color: 'var(--text-primary)'
                 }}>
                     <FaClipboardCheck style={{ color: 'var(--primary)', fontSize: '1.5rem' }} />
-                    <span>Attendify</span>
+                    <span>Presenz</span>
                 </div>
 
                 <div className="nav-links" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>

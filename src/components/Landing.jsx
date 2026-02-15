@@ -89,7 +89,7 @@ const Landing = () => {
                 <div className="landing-brand">
                     <div className="landing-mark" />
                     <div>
-                        <div className="landing-logo">Attendify</div>
+                        <div className="landing-logo">Presenz</div>
                         <div className="landing-subtitle">Attendance that proves presence.</div>
                     </div>
                 </div>
@@ -110,7 +110,7 @@ const Landing = () => {
                             Make attendance precise, trusted, and effortless.
                         </h1>
                         <p className="landing-lede">
-                            Attendify combines selfie proof, geo-fencing, and smart shift rules
+                            Presenz combines selfie proof, geo-fencing, and smart shift rules
                             so every punch is authentic, every report is clear, and every team
                             stays aligned.
                         </p>

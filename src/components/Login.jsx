@@ -69,7 +69,7 @@ export default function Login() {
                         fontWeight: '700',
                         color: 'var(--text-primary)'
                     }}>
-                        Welcome to Attendify
+                        Welcome to Presenz
                     </h1>
                     <p style={{
                         margin: 0,
