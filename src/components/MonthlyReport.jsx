@@ -1,33 +1,13 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState } from 'react';
 import { useAttendance } from '../context/AttendanceContext';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, parse, getDaysInMonth, getDay, differenceInMinutes, isSameDay, isBefore, isAfter } from 'date-fns';
 import { FaFileDownload, FaFilter, FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaExclamationCircle } from 'react-icons/fa';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
 
 const MonthlyReport = () => {
-    const { members, getDayStatus } = useAttendance();
+    const { members, getDayStatus, settings: contextSettings } = useAttendance();
     const [currentMonthStr, setCurrentMonthStr] = useState(format(new Date(), 'yyyy-MM'));
     const [selectedMember, setSelectedMember] = useState('all');
-    const [settings, setSettings] = useState(null);
-
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                const docSnap = await getDoc(doc(db, 'settings', 'attendance'));
-                if (docSnap.exists()) {
-                    setSettings(docSnap.data());
-                } else {
-                    setSettings({ holidays: [], ruleSets: [] });
-                }
-            } catch (e) {
-                console.error("Settings load failed", e);
-                // Set default settings even on error
-                setSettings({ holidays: [], ruleSets: [] });
-            }
-        };
-        fetchSettings();
-    }, []);
+    const settings = contextSettings;
 
     const selectedDate = parse(currentMonthStr, 'yyyy-MM', new Date());
     const start = startOfMonth(selectedDate);

@@ -3,7 +3,7 @@ import { FaExclamationTriangle, FaCheck, FaTimes, FaEye, FaFilter } from 'react-
 import { format } from 'date-fns';
 import { useAttendance } from '../context/AttendanceContext';
 import { useAuth } from '../context/AuthContext';
-import { getMissPunchRequestsByStatus, updateMissPunchRequest } from '../localStore';
+import { fsGetMissPunchRequestsByStatus, fsUpdateMissPunchRequest } from '../firestoreService';
 
 const MissPunchRequests = () => {
     const { markAttendance, members } = useAttendance();
@@ -17,10 +17,10 @@ const MissPunchRequests = () => {
         loadRequests();
     }, [filter]);
 
-    const loadRequests = () => {
+    const loadRequests = async () => {
         setLoading(true);
         try {
-            const allRequests = getMissPunchRequestsByStatus(filter);
+            const allRequests = await fsGetMissPunchRequestsByStatus(filter);
             setRequests(allRequests);
         } catch (err) {
             console.error('Error loading requests:', err);
@@ -35,7 +35,7 @@ const MissPunchRequests = () => {
 
         try {
             // Update the request status
-            updateMissPunchRequest(request.id, {
+            await fsUpdateMissPunchRequest(request.id, {
                 status: 'approved',
                 approvedBy: currentUser.email,
                 approvedAt: new Date().toISOString()
@@ -68,7 +68,7 @@ const MissPunchRequests = () => {
         if (reason === null) return; // User cancelled
 
         try {
-            updateMissPunchRequest(request.id, {
+            await fsUpdateMissPunchRequest(request.id, {
                 status: 'rejected',
                 approvedBy: currentUser.email,
                 approvedAt: new Date().toISOString(),

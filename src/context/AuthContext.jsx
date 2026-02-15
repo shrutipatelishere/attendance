@@ -1,5 +1,7 @@
 import React, { useContext, useState, useEffect, createContext } from "react";
-import { initializeStore, login as localLogin, logout as localLogout, getCurrentUser } from "../localStore";
+import { auth, db } from "../firebase";
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 const AuthContext = createContext();
 
@@ -12,66 +14,50 @@ export function AuthProvider({ children }) {
     const [userRole, setUserRole] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Initialize demo data on first load
     useEffect(() => {
-        initializeStore();
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                let role = 'Staff';
+                let name = firebaseUser.displayName || firebaseUser.email.split('@')[0];
 
-        // Check if user is already logged in
-        const savedUser = getCurrentUser();
-        if (savedUser) {
-            setCurrentUser(savedUser);
-            // Determine role - Admin if email contains 'admin' or role is Admin
-            let role = savedUser.role || 'Staff';
-            if (savedUser.email && savedUser.email.toLowerCase().includes('admin')) {
-                role = 'Admin';
-            }
-            setUserRole(role);
-        }
-        setLoading(false);
-    }, []);
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+                    if (userDoc.exists()) {
+                        const data = userDoc.data();
+                        role = data.role || 'Staff';
+                        if (data.name) name = data.name;
+                    }
+                } catch (e) {
+                    console.error('Failed to fetch user role:', e);
+                }
 
-    // Login
-    function login(email, password) {
-        return new Promise((resolve, reject) => {
-            try {
-                const user = localLogin(email, password);
-
-                // Determine role
-                let role = user.role || 'Staff';
-                if (user.email && user.email.toLowerCase().includes('admin')) {
+                if (firebaseUser.email && firebaseUser.email.toLowerCase().includes('admin')) {
                     role = 'Admin';
                 }
 
-                setCurrentUser(user);
+                setCurrentUser({ uid: firebaseUser.uid, email: firebaseUser.email, name, role });
                 setUserRole(role);
-                resolve(user);
-            } catch (error) {
-                reject(error);
+            } else {
+                setCurrentUser(null);
+                setUserRole(null);
             }
+            setLoading(false);
         });
+
+        return unsubscribe;
+    }, []);
+
+    async function login(email, password) {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        return cred.user;
     }
 
-    // Signup - creates a new user (for demo, just add to store)
-    function signup(email, password, name = '', role = 'Staff') {
-        return new Promise((resolve, reject) => {
-            try {
-                // For demo, we'll handle this through MemberManager
-                // This is just a placeholder for compatibility
-                reject(new Error('Please use Admin panel to create new users'));
-            } catch (error) {
-                reject(error);
-            }
-        });
+    function signup() {
+        return Promise.reject(new Error('Please use Admin panel to create new users'));
     }
 
-    // Logout
-    function logout() {
-        return new Promise((resolve) => {
-            localLogout();
-            setCurrentUser(null);
-            setUserRole(null);
-            resolve();
-        });
+    async function logout() {
+        await signOut(auth);
     }
 
     const value = {
@@ -84,8 +70,8 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={value} >
+        <AuthContext.Provider value={value}>
             {!loading && children}
-        </AuthContext.Provider >
+        </AuthContext.Provider>
     );
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { format } from 'date-fns';
 import { FaExclamationTriangle, FaCheckCircle, FaClock, FaPaperPlane } from 'react-icons/fa';
-import { getMissPunchRequestsByUser, addMissPunchRequest } from '../localStore';
+import { fsGetMissPunchRequestsByUser, fsAddMissPunchRequest } from '../firestoreService';
 
 const MissPunch = () => {
     const { currentUser } = useAuth();
@@ -16,9 +16,9 @@ const MissPunch = () => {
     const [myRequests, setMyRequests] = useState([]);
     const [showRequests, setShowRequests] = useState(false);
 
-    const loadMyRequests = () => {
+    const loadMyRequests = async () => {
         try {
-            const requests = getMissPunchRequestsByUser(currentUser.uid);
+            const requests = await fsGetMissPunchRequestsByUser(currentUser.uid);
             setMyRequests(requests);
             setShowRequests(true);
         } catch (err) {
@@ -44,7 +44,7 @@ const MissPunch = () => {
         setLoading(true);
 
         try {
-            addMissPunchRequest({
+            await fsAddMissPunchRequest({
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
                 date: selectedDate,

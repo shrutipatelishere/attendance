@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAttendance } from '../context/AttendanceContext';
 import { FaCog, FaCalendarAlt, FaClock, FaPlus, FaTrash, FaMapMarkerAlt, FaRedo, FaDatabase, FaDownload, FaUpload, FaCheck } from 'react-icons/fa';
-import { resetToDemo, exportAllData, importAllData, downloadDataAsJson, getDataStats } from '../localStore';
+import { fsExportAllData, fsImportAllData, fsDownloadDataAsJson, fsGetDataStats } from '../firestoreService';
 
 const Settings = () => {
     const { settings: contextSettings, updateSettings } = useAttendance();
@@ -38,7 +38,7 @@ const Settings = () => {
         setLoading(false);
 
         // Load data stats
-        setDataStats(getDataStats());
+        fsGetDataStats().then(stats => setDataStats(stats)).catch(console.error);
     }, [contextSettings]);
 
     const saveSettings = async () => {
@@ -54,15 +54,12 @@ const Settings = () => {
     };
 
     const handleResetDemo = () => {
-        if (window.confirm('This will reset ALL data to the demo state. Are you sure?')) {
-            resetToDemo();
-            window.location.reload();
-        }
+        alert('Reset to demo is not available in Firebase mode. Use the Import feature to restore data from a backup.');
     };
 
-    const handleExport = () => {
+    const handleExport = async () => {
         try {
-            downloadDataAsJson();
+            await fsDownloadDataAsJson();
             setMsg('Data exported successfully! Check your downloads folder.');
             setTimeout(() => setMsg(''), 3000);
         } catch (error) {
@@ -80,11 +77,11 @@ const Settings = () => {
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
             try {
                 const data = JSON.parse(e.target.result);
                 if (window.confirm(`Import data from "${file.name}"?\n\nThis will replace ALL current data. This action cannot be undone.`)) {
-                    importAllData(data);
+                    await fsImportAllData(data);
                     setMsg('Data imported successfully! Refreshing...');
                     setTimeout(() => {
                         window.location.reload();
@@ -245,7 +242,7 @@ const Settings = () => {
                 </button>
                 <button
                     className={`tab-button ${activeTab === 'data' ? 'active' : ''}`}
-                    onClick={() => { setActiveTab('data'); setDataStats(getDataStats()); }}
+                    onClick={() => { setActiveTab('data'); fsGetDataStats().then(stats => setDataStats(stats)).catch(console.error); }}
                     style={{ flex: 1 }}
                 >
                     <FaDatabase /> Data
@@ -535,8 +532,8 @@ const Settings = () => {
                                 <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Miss Punch Requests</div>
                             </div>
                             <div style={{ background: 'var(--bg-hover)', padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#a78bfa' }}>{dataStats.totalUsers}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>User Accounts</div>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#a78bfa' }}>Firebase</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Storage Mode</div>
                             </div>
                         </div>
                     )}

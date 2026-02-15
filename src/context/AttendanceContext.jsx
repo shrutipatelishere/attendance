@@ -1,19 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
-  getStaff,
-  getAttendance,
-  getSettings,
-  addStaff as localAddStaff,
-  updateStaff as localUpdateStaff,
-  removeStaff as localRemoveStaff,
-  updateStaffImage as localUpdateStaffImage,
-  markAttendance as localMarkAttendance,
-  markAllAttendance as localMarkAllAttendance,
-  saveSettings as localSaveSettings,
-  subscribe,
-  KEYS
-} from '../localStore';
-import { format, parse, differenceInMinutes } from 'date-fns';
+  fsAddStaff, fsUpdateStaff, fsRemoveStaff, fsUpdateStaffImage,
+  fsMarkAttendance, fsMarkAllAttendance, fsSaveSettings,
+  subscribeStaff, subscribeAttendance, subscribeSettings
+} from '../firestoreService';
+import { parse, differenceInMinutes } from 'date-fns';
 
 const AttendanceContext = createContext();
 
@@ -25,40 +16,28 @@ export const AttendanceProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState({ ruleSets: [], locations: [], holidays: [] });
 
-  // Load initial data
-  const loadData = useCallback(() => {
-    const staffList = getStaff();
-    const attendanceRecords = getAttendance();
-    const settingsData = getSettings();
-
-    setMembers(staffList);
-    setRecords(attendanceRecords);
-    setSettings({
-      ruleSets: settingsData.ruleSets || [{ id: 'default', name: 'General Shift', minHalfDay: 4, minFullDay: 8 }],
-      locations: settingsData.locations || [],
-      holidays: settingsData.holidays || []
-    });
-    setLoading(false);
-  }, []);
-
-  // Initial load
+  // Real-time Firestore listeners
   useEffect(() => {
-    loadData();
+    let initialLoads = 3;
+    const markReady = () => { if (--initialLoads <= 0) setLoading(false); };
 
-    // Subscribe to changes for real-time updates (simulated)
-    const unsubStaff = subscribe(KEYS.STAFF, () => {
-      setMembers(getStaff());
+    const unsubStaff = subscribeStaff((list) => {
+      setMembers(list);
+      markReady();
     });
-    const unsubAttendance = subscribe(KEYS.ATTENDANCE, () => {
-      setRecords(getAttendance());
+
+    const unsubAttendance = subscribeAttendance((recs) => {
+      setRecords(recs);
+      markReady();
     });
-    const unsubSettings = subscribe(KEYS.SETTINGS, () => {
-      const settingsData = getSettings();
+
+    const unsubSettings = subscribeSettings((data) => {
       setSettings({
-        ruleSets: settingsData.ruleSets || [{ id: 'default', name: 'General Shift', minHalfDay: 4, minFullDay: 8 }],
-        locations: settingsData.locations || [],
-        holidays: settingsData.holidays || []
+        ruleSets: data.ruleSets || [{ id: 'default', name: 'General Shift', minHalfDay: 4, minFullDay: 8 }],
+        locations: data.locations || [],
+        holidays: data.holidays || []
       });
+      markReady();
     });
 
     return () => {
@@ -66,9 +45,9 @@ export const AttendanceProvider = ({ children }) => {
       unsubAttendance();
       unsubSettings();
     };
-  }, [loadData]);
+  }, []);
 
-  // Actions
+  // Actions — write to Firestore; onSnapshot callbacks update state automatically
   const addMember = async (name, email = "", role = "Employee", uid = null, additionalDetails = {}) => {
     const {
       salary = '',
@@ -78,58 +57,39 @@ export const AttendanceProvider = ({ children }) => {
       ruleSetId = null,
       attendanceLocationId = null,
       attendanceLocation = null,
-      password = 'password123'
     } = additionalDetails;
 
-    const newStaff = localAddStaff({
-      name,
-      email,
-      role,
+    return await fsAddStaff({
+      name, email, role,
       uid: uid || 'emp' + Date.now(),
-      salary,
-      phone,
-      address,
-      bankDetails,
-      ruleSetId,
-      attendanceLocationId,
-      attendanceLocation,
-      password
+      salary, phone, address, bankDetails,
+      ruleSetId, attendanceLocationId, attendanceLocation
     });
-
-    // Refresh members
-    setMembers(getStaff());
-    return newStaff;
   };
 
   const updateMember = async (id, data) => {
-    localUpdateStaff(id, data);
-    setMembers(getStaff());
+    await fsUpdateStaff(id, data);
   };
 
   const updateMemberImage = async (id, imageDataUrl) => {
-    localUpdateStaffImage(id, imageDataUrl);
-    setMembers(getStaff());
+    await fsUpdateStaffImage(id, imageDataUrl);
   };
 
   const removeMember = async (id) => {
-    localRemoveStaff(id);
-    setMembers(getStaff());
+    await fsRemoveStaff(id);
   };
 
   const resetAttendance = async (dateStr, memberId) => {
-    localMarkAttendance(dateStr, memberId, 'absent');
-    setRecords(getAttendance());
+    await fsMarkAttendance(dateStr, memberId, 'absent');
   };
 
   const markAttendance = async (dateStr, memberId, data) => {
-    localMarkAttendance(dateStr, memberId, data);
-    setRecords(getAttendance());
+    await fsMarkAttendance(dateStr, memberId, data);
   };
 
   const markAll = async (dateStr, status) => {
     const memberIds = members.map(m => m.uid || m.id);
-    localMarkAllAttendance(dateStr, memberIds, status);
-    setRecords(getAttendance());
+    await fsMarkAllAttendance(dateStr, memberIds, status);
   };
 
   const getDayStatus = (dateStr) => {
@@ -159,7 +119,6 @@ export const AttendanceProvider = ({ children }) => {
     };
   };
 
-  // SHARED: Strict Status Calculation
   const calculateDetailedStatus = (raw, ruleSetId) => {
     if (!raw) return { status: '', label: 'Unmarked', color: 'var(--text-secondary)' };
 
@@ -171,7 +130,6 @@ export const AttendanceProvider = ({ children }) => {
     if (statusKey === 'late') return { status: 'late', label: 'Late', color: 'var(--color-late)' };
 
     if ((statusKey === 'present' || statusKey === 'late') && punchIn) {
-      // Find Rule
       const ruleSets = settings?.ruleSets || [];
       const rule = ruleSets.find(r => r.id === ruleSetId) || ruleSets.find(r => r.id === 'default') || { minHalfDay: 4, minFullDay: 8 };
 
@@ -180,8 +138,8 @@ export const AttendanceProvider = ({ children }) => {
           const today = new Date();
           const pIn = parse(punchIn, 'HH:mm:ss', today);
           const pOut = parse(punchOut, 'HH:mm:ss', today);
-          const diffMinutes = differenceInMinutes(pOut, pIn);
-          const diffHours = diffMinutes / 60;
+          const diffMins = differenceInMinutes(pOut, pIn);
+          const diffHours = diffMins / 60;
 
           if (diffHours >= rule.minFullDay) {
             return { status: 'present', label: 'Full Day', color: 'var(--color-present)', duration: diffHours };
@@ -203,19 +161,12 @@ export const AttendanceProvider = ({ children }) => {
     return { status: '', label: 'Unmarked', color: 'var(--text-secondary)' };
   };
 
-  // Helper to find member by UID
   const getMemberByUid = (uid) => {
     return members.find(m => m.uid === uid);
   };
 
-  // Save settings
   const updateSettings = async (newSettings) => {
-    localSaveSettings(newSettings);
-    setSettings({
-      ruleSets: newSettings.ruleSets || [],
-      locations: newSettings.locations || [],
-      holidays: newSettings.holidays || []
-    });
+    await fsSaveSettings(newSettings);
   };
 
   return (
