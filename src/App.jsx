@@ -39,7 +39,7 @@ const Layout = ({ children }) => {
       <main style={{
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: '2rem'
+        padding: 'clamp(0.75rem, 3vw, 2rem)'
       }}>
         {children}
       </main>

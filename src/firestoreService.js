@@ -1,8 +1,9 @@
-import { db } from './firebase';
+import { db, auth, secondaryAuth } from './firebase';
 import {
   collection, doc, getDocs, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
   onSnapshot, query, where, orderBy
 } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
 
 // ─── Staff ───────────────────────────────────────────────
 
@@ -42,6 +43,26 @@ export async function fsUpdateStaffImage(id, imageDataUrl) {
 
 export async function fsRemoveStaff(id) {
   await deleteDoc(doc(db, 'staff', id));
+}
+
+// ─── Auth User Management ────────────────────────────────
+
+export async function fsCreateAuthUser(email, password) {
+  // Use secondary app so admin stays logged in
+  const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+  await signOut(secondaryAuth);
+  return cred.user.uid;
+}
+
+export async function fsChangeUserPassword(email, currentPassword, newPassword) {
+  // Sign in as the user on secondary auth, update password, sign out
+  const cred = await signInWithEmailAndPassword(secondaryAuth, email, currentPassword);
+  await updatePassword(cred.user, newPassword);
+  await signOut(secondaryAuth);
+}
+
+export async function fsSendPasswordReset(email) {
+  await sendPasswordResetEmail(auth, email);
 }
 
 // ─── Staff listener ──────────────────────────────────────

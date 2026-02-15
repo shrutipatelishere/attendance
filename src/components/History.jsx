@@ -12,13 +12,14 @@ const History = () => {
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             <h2 className="text-gradient" style={{ textAlign: 'center', marginBottom: '2rem' }}>Attendance History</h2>
 
-            <div className="glass-panel" style={{ padding: 0 }}>
+            <div className="glass-panel" style={{ padding: 0, overflow: 'hidden' }}>
                 {dates.length === 0 ? (
                     <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
                         No records found yet.
                     </div>
                 ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <div className="table-scroll">
+                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '480px' }}>
                         <thead>
                             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left' }}>
                                 <th style={{ padding: '1rem' }}>Date</th>
@@ -46,6 +47,7 @@ const History = () => {
                             })}
                         </tbody>
                     </table>
+                    </div>
                 )}
             </div>
         </div>

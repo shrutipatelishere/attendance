@@ -185,7 +185,7 @@ const Settings = () => {
                 <div>
                     <h1 style={{
                         margin: '0 0 0.5rem 0',
-                        fontSize: '1.875rem',
+                        fontSize: 'clamp(1.25rem, 5vw, 1.875rem)',
                         fontWeight: '700',
                         color: 'var(--text-primary)',
                         display: 'flex',
@@ -273,7 +273,7 @@ const Settings = () => {
                                         type="text"
                                         value={rule.name}
                                         onChange={(e) => updateRuleSet(rule.id, 'name', e.target.value)}
-                                        style={{ background: 'transparent', border: 'none', borderBottom: '2px solid var(--primary)', color: 'var(--text-primary)', fontWeight: '600', fontSize: '1.125rem', width: '200px', outline: 'none' }}
+                                        style={{ background: 'transparent', border: 'none', borderBottom: '2px solid var(--primary)', color: 'var(--text-primary)', fontWeight: '600', fontSize: '1.125rem', width: '100%', maxWidth: '200px', outline: 'none' }}
                                     />
                                     {settings.ruleSets.length > 1 && (
                                         <button onClick={() => deleteRuleSet(rule.id)} style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: '0.5rem', fontSize: '1rem' }}>
@@ -282,7 +282,7 @@ const Settings = () => {
                                     )}
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: '500' }}>Start Time</label>
                                         <input type="time" value={rule.startTime} onChange={(e) => updateRuleSet(rule.id, 'startTime', e.target.value)} style={{ width: '100%' }} />
@@ -462,13 +462,13 @@ const Settings = () => {
                                         type="text"
                                         value={location.name}
                                         onChange={(e) => updateLocation(location.id, 'name', e.target.value)}
-                                        style={{ background: 'transparent', border: 'none', borderBottom: '2px solid var(--primary)', color: 'var(--text-primary)', fontWeight: '600', fontSize: '1.125rem', width: '240px', outline: 'none' }}
+                                        style={{ background: 'transparent', border: 'none', borderBottom: '2px solid var(--primary)', color: 'var(--text-primary)', fontWeight: '600', fontSize: '1.125rem', width: '100%', maxWidth: '240px', outline: 'none' }}
                                     />
                                     <button onClick={() => removeLocation(location.id)} style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: '0.5rem', fontSize: '1rem' }} title="Delete location">
                                         <FaTrash />
                                     </button>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))', gap: '1rem' }}>
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: '500' }}>Latitude</label>
                                         <input
@@ -518,7 +518,7 @@ const Settings = () => {
 
                     {/* Data Stats */}
                     {dataStats && (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                             <div style={{ background: 'var(--bg-hover)', padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
                                 <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-accent)' }}>{dataStats.totalStaff}</div>
                                 <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Staff Members</div>

@@ -101,7 +101,7 @@ const MissPunchRequests = () => {
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <h1 style={{ margin: '0 0 0.5rem 0', fontSize: '1.875rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+                    <h1 style={{ margin: '0 0 0.5rem 0', fontSize: 'clamp(1.25rem, 5vw, 1.875rem)', fontWeight: '700', color: 'var(--text-primary)' }}>
                         Miss Punch Requests
                     </h1>
                     <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem', fontSize: '0.875rem' }}>
@@ -131,7 +131,9 @@ const MissPunchRequests = () => {
                 display: 'flex',
                 gap: '0.5rem',
                 borderBottom: '2px solid var(--border-color)',
-                paddingBottom: '0.5rem'
+                paddingBottom: '0.5rem',
+                overflowX: 'auto',
+                WebkitOverflowScrolling: 'touch'
             }}>
                 {['pending', 'approved', 'rejected', 'all'].map(f => (
                     <button
@@ -143,7 +145,9 @@ const MissPunchRequests = () => {
                             fontSize: '0.875rem',
                             textTransform: 'capitalize',
                             backgroundColor: filter === f ? 'var(--primary)' : undefined,
-                            color: filter === f ? 'white' : undefined
+                            color: filter === f ? 'white' : undefined,
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0
                         }}
                     >
                         <FaFilter /> {f}

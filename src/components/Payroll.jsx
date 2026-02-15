@@ -152,21 +152,21 @@ const Payroll = () => {
                         Monthly salary calculation based on attendance
                     </p>
                 </div>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <Link to="/settings" style={{ color: 'var(--text-secondary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <Link to="/settings" style={{ color: 'var(--text-secondary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', whiteSpace: 'nowrap' }}>
                         <FaCog /> Rules
                     </Link>
                     <input
                         type="month"
                         value={currentMonthStr}
                         onChange={(e) => setCurrentMonthStr(e.target.value)}
-                        style={{ background: 'var(--bg-card)', border: 'var(--glass-border)', color: 'white', padding: '0.5rem 1rem', borderRadius: '8px' }}
+                        style={{ background: 'var(--bg-card)', border: 'var(--glass-border)', color: 'white', padding: '0.5rem 1rem', borderRadius: '8px', minWidth: '0' }}
                     />
                 </div>
             </div>
 
             {/* Summary Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                 <div className="glass-panel" style={{ textAlign: 'center', padding: '1.5rem' }}>
                     <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Total Staff</span>
                     <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>

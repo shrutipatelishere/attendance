@@ -231,7 +231,7 @@ const MonthlyReport = () => {
             {/* Filters */}
             <div className="card" style={{ marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
-                    <div style={{ flex: '1', minWidth: '200px' }}>
+                    <div style={{ flex: '1', minWidth: 'min(200px, 100%)' }}>
                         <label><FaCalendarAlt /> Select Month</label>
                         <input
                             type="month"
@@ -240,7 +240,7 @@ const MonthlyReport = () => {
                             style={{ marginTop: '0.5rem' }}
                         />
                     </div>
-                    <div style={{ flex: '1', minWidth: '200px' }}>
+                    <div style={{ flex: '1', minWidth: 'min(200px, 100%)' }}>
                         <label><FaFilter /> Filter Employee</label>
                         <select
                             value={selectedMember}
@@ -324,7 +324,7 @@ const MonthlyReport = () => {
                 // Detailed View for Single Employee
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     {/* Summary Cards */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))', gap: '1rem' }}>
                         <div className="card" style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--success)' }}>
                                 {reportData[0].presentDays}

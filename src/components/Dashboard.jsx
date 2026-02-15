@@ -191,7 +191,7 @@ const Dashboard = () => {
                         <h3 style={{ marginTop: 0, fontSize: '1.25rem', fontWeight: '600', color: 'var(--text-primary)' }}>Edit Times: {editingMember.name}</h3>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginTop: '1.5rem' }}>
                             {editingRecord && (editingRecord.selfieIn?.dataUrl || editingRecord.selfieOut?.dataUrl) ? (
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))', gap: '0.75rem' }}>
                                     <div>
                                         <div style={{ fontSize: '0.8125rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Selfie In</div>
                                         {editingRecord.selfieIn?.dataUrl ? (
@@ -259,7 +259,7 @@ const Dashboard = () => {
             )}
 
             {/* Stats Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '0.75rem' }}>
                 <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <div style={{
                         background: 'var(--primary-light)',

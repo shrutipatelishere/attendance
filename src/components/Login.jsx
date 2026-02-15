@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { FaClipboardCheck, FaEnvelope, FaLock, FaInfoCircle } from 'react-icons/fa';
@@ -6,11 +6,18 @@ import { FaClipboardCheck, FaEnvelope, FaLock, FaInfoCircle } from 'react-icons/
 export default function Login() {
     const emailRef = useRef();
     const passwordRef = useRef();
-    const { login } = useAuth();
+    const { login, currentUser, userRole } = useAuth();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [showCredentials, setShowCredentials] = useState(false);
     const navigate = useNavigate();
+
+    // Navigate once auth state is fully resolved
+    useEffect(() => {
+        if (currentUser && userRole) {
+            navigate(userRole === 'Admin' ? '/' : '/employee', { replace: true });
+        }
+    }, [currentUser, userRole, navigate]);
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -19,13 +26,12 @@ export default function Login() {
             setError('');
             setLoading(true);
             await login(emailRef.current.value, passwordRef.current.value);
-            navigate('/');
+            // Navigation handled by useEffect above after auth state settles
         } catch (err) {
             console.error(err);
             setError('Failed to log in. Check your credentials.');
+            setLoading(false);
         }
-
-        setLoading(false);
     }
 
     const fillCredentials = (email, password) => {
@@ -87,7 +93,7 @@ export default function Login() {
                         fontSize: '0.75rem',
                         fontWeight: '600'
                     }}>
-                        DEMO MODE - Data stored in browser
+                        Cloud-powered attendance management
                     </div>
                 </div>
 
@@ -132,7 +138,7 @@ export default function Login() {
                                     type="email"
                                     ref={emailRef}
                                     required
-                                    placeholder="admin@attendify.com"
+                                    placeholder="admin@presenz.com"
                                     style={{ paddingLeft: '2.5rem' }}
                                 />
                             </div>
@@ -218,10 +224,10 @@ export default function Login() {
                                         alignItems: 'center',
                                         marginTop: '0.5rem'
                                     }}>
-                                        <code style={{ color: 'var(--primary)' }}>admin@attendify.com / admin123</code>
+                                        <code style={{ color: 'var(--primary)' }}>admin@presenz.com / admin123</code>
                                         <button
                                             type="button"
-                                            onClick={() => fillCredentials('admin@attendify.com', 'admin123')}
+                                            onClick={() => fillCredentials('admin@presenz.com', 'admin123')}
                                             style={{
                                                 padding: '0.25rem 0.5rem',
                                                 fontSize: '0.7rem',
@@ -245,10 +251,10 @@ export default function Login() {
                                         alignItems: 'center',
                                         marginTop: '0.5rem'
                                     }}>
-                                        <code style={{ color: 'var(--primary)' }}>rahul@attendify.com / password123</code>
+                                        <code style={{ color: 'var(--primary)' }}>rahul@presenz.com / password123</code>
                                         <button
                                             type="button"
-                                            onClick={() => fillCredentials('rahul@attendify.com', 'password123')}
+                                            onClick={() => fillCredentials('rahul@presenz.com', 'password123')}
                                             style={{
                                                 padding: '0.25rem 0.5rem',
                                                 fontSize: '0.7rem',
@@ -272,7 +278,7 @@ export default function Login() {
                                     color: 'var(--warning)',
                                     fontSize: '0.75rem'
                                 }}>
-                                    All 10 employees use <strong>password123</strong> as password
+                                    All employees use <strong>password123</strong> as default password
                                 </div>
                             </div>
                         )}

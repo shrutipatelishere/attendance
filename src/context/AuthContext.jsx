@@ -17,6 +17,8 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
+                // Keep loading true while we fetch the role
+                setLoading(true);
                 let role = 'Staff';
                 let name = firebaseUser.displayName || firebaseUser.email.split('@')[0];
 

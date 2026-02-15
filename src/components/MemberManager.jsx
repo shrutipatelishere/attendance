@@ -1,12 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { useAttendance } from '../context/AttendanceContext';
-import { FaUserPlus, FaTrash, FaEdit, FaCheck, FaCamera, FaUser } from 'react-icons/fa';
+import { FaUserPlus, FaTrash, FaEdit, FaCheck, FaCamera, FaUser, FaKey } from 'react-icons/fa';
+import { fsCreateAuthUser, fsChangeUserPassword, fsSendPasswordReset } from '../firestoreService';
 
 const MemberManager = () => {
     const { members, addMember, updateMember, updateMemberImage, removeMember, settings } = useAttendance();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [role, setRole] = useState('Employee');
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState('');
@@ -37,6 +40,8 @@ const MemberManager = () => {
         setName('');
         setEmail('');
         setPassword('');
+        setCurrentPassword('');
+        setNewPassword('');
         setPhone('');
         setAddress('');
         setSalary('');
@@ -100,17 +105,26 @@ const MemberManager = () => {
             };
 
             if (editMode) {
+                const { password: _pw, ...updateData } = additionalData;
                 await updateMember(editingId, {
                     name,
                     email,
                     role,
-                    ...additionalData
+                    ...updateData
                 });
-                setMsg('Staff details updated successfully!');
+
+                // Change password if both fields are filled
+                if (currentPassword && newPassword) {
+                    await fsChangeUserPassword(email, currentPassword, newPassword);
+                    setMsg('Staff details & password updated!');
+                } else {
+                    setMsg('Staff details updated successfully!');
+                }
                 resetForm();
             } else {
-                const newUid = 'emp' + Date.now();
-                await addMember(name, email, role, newUid, additionalData);
+                // Create Firebase Auth account first
+                const authUid = await fsCreateAuthUser(email, password);
+                await addMember(name, email, role, authUid, additionalData);
                 setMsg(`Staff created! Login: ${email} | Password: ${password}`);
                 resetForm();
             }
@@ -201,7 +215,7 @@ const MemberManager = () => {
                     fontFamily: 'monospace'
                 }}>{msg}</div>}
 
-                <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', alignItems: 'end' }}>
+                <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '1rem', alignItems: 'end' }}>
                     {/* Basic Info */}
                     <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', marginBottom: '0.5rem', color: 'var(--text-accent)' }}>Basic Credentials</div>
 
@@ -213,20 +227,41 @@ const MemberManager = () => {
                         <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Email (Login ID) *</label>
                         <input type="email" placeholder="john@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-                            {editMode ? 'Password (Unchanged)' : 'Password *'}
-                        </label>
-                        <input
-                            type="password"
-                            placeholder={editMode ? "Keep current" : "Min 6 chars"}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required={!editMode}
-                            minLength={6}
-                            disabled={editMode}
-                        />
-                    </div>
+                    {editMode ? (
+                        <>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Current Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter current password"
+                                    value={currentPassword}
+                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>New Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Leave blank to keep"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    minLength={6}
+                                />
+                            </div>
+                        </>
+                    ) : (
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Password *</label>
+                            <input
+                                type="password"
+                                placeholder="Min 6 chars"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                minLength={6}
+                            />
+                        </div>
+                    )}
                     <div>
                         <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Role</label>
                         <select value={role} onChange={(e) => setRole(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', color: 'white', border: 'var(--glass-border)' }}>
@@ -247,7 +282,7 @@ const MemberManager = () => {
                         <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Monthly Salary (Rs.)</label>
                         <input type="number" placeholder="25000" value={salary} onChange={(e) => setSalary(e.target.value)} />
                     </div>
-                    <div style={{ gridColumn: 'span 2' }}>
+                    <div style={{ gridColumn: '1 / -1' }}>
                         <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Address</label>
                         <input type="text" placeholder="Flat No, Street, City..." value={address} onChange={(e) => setAddress(e.target.value)} />
                     </div>
@@ -311,11 +346,12 @@ const MemberManager = () => {
                 </form>
             </div>
 
-            <div className="glass-panel" style={{ padding: 0 }}>
+            <div className="glass-panel" style={{ padding: 0, overflow: 'hidden' }}>
                 {members.length === 0 ? (
                     <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>No staff added yet.</div>
                 ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <div className="table-scroll">
+                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
                         <thead>
                             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left', color: 'var(--text-secondary)' }}>
                                 <th style={{ padding: '1rem' }}>Photo</th>
@@ -409,6 +445,7 @@ const MemberManager = () => {
                             ))}
                         </tbody>
                     </table>
+                    </div>
                 )}
             </div>
         </div>

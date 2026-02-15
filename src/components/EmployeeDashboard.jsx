@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { FaCamera, FaHistory, FaExclamationTriangle } from 'react-icons/fa';
 import SelfieAttendance from './SelfieAttendance';
 import EmployeeHistory from './EmployeeHistory';
 import MissPunch from './MissPunch';
 
 const EmployeeDashboard = () => {
-    const [activeTab, setActiveTab] = useState('attendance');
+    const [searchParams] = useSearchParams();
+    const tabParam = searchParams.get('tab');
+    const [activeTab, setActiveTab] = useState(tabParam || 'attendance');
+
+    useEffect(() => {
+        if (tabParam && ['attendance', 'misspunch', 'history'].includes(tabParam)) {
+            setActiveTab(tabParam);
+        }
+    }, [tabParam]);
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -13,7 +22,7 @@ const EmployeeDashboard = () => {
             <div style={{ marginBottom: '1.5rem' }}>
                 <h1 style={{
                     margin: '0 0 0.5rem 0',
-                    fontSize: '1.875rem',
+                    fontSize: 'clamp(1.25rem, 5vw, 1.875rem)',
                     fontWeight: '700',
                     color: 'var(--text-primary)'
                 }}>
