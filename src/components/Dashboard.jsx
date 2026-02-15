@@ -105,20 +105,21 @@ const Dashboard = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative' }}>
 
             {/* Header Section */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div style={{ minWidth: 0 }}>
                     <h1 style={{ margin: 0, fontSize: '1.875rem', fontWeight: '700', color: 'var(--text-primary)' }}>Dashboard</h1>
                     <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem', fontSize: '0.875rem' }}>Overview for {format(new Date(selectedDate), 'MMMM dd, yyyy')}</p>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <input
                         type="date"
                         value={selectedDate}
                         onChange={(e) => setSelectedDate(e.target.value)}
+                        style={{ width: 'auto' }}
                     />
                     <Link to="/staff" style={{ textDecoration: 'none' }}>
-                        <button style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <button style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', whiteSpace: 'nowrap' }}>
                             <FaPlus /> Add Staff
                         </button>
                     </Link>
@@ -315,22 +316,22 @@ const Dashboard = () => {
             {/* List */}
             <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
                 <div style={{
-                    padding: '1.25rem 1.5rem',
+                    padding: '1rem 1.25rem',
                     borderBottom: '1px solid var(--border-color)',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    flexWrap: 'wrap'
                 }}>
                     <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: '600', color: 'var(--text-primary)' }}>Daily Attendance</h3>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button
-                            onClick={() => markAll(selectedDate, 'present')}
-                            className="btn-success"
-                            style={{ fontSize: '0.8125rem', padding: '0.5rem 0.875rem' }}
-                        >
-                            <FaCheckCircle /> Mark All Present
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => markAll(selectedDate, 'present')}
+                        className="btn-success"
+                        style={{ fontSize: '0.8125rem', padding: '0.5rem 0.875rem', whiteSpace: 'nowrap' }}
+                    >
+                        <FaCheckCircle /> Mark All Present
+                    </button>
                 </div>
 
                 {members.length === 0 ? (

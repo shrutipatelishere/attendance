@@ -217,7 +217,7 @@ const MemberManager = () => {
 
                 <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '1rem', alignItems: 'end' }}>
                     {/* Basic Info */}
-                    <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', marginBottom: '0.5rem', color: 'var(--text-accent)' }}>Basic Credentials</div>
+                    <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8125rem' }}>Basic Credentials</div>
 
                     <div>
                         <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Full Name *</label>
@@ -264,7 +264,7 @@ const MemberManager = () => {
                     )}
                     <div>
                         <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Role</label>
-                        <select value={role} onChange={(e) => setRole(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', color: 'white', border: 'var(--glass-border)' }}>
+                        <select value={role} onChange={(e) => setRole(e.target.value)}>
                             <option value="Employee">Employee</option>
                             <option value="Manager">Manager</option>
                             <option value="Intern">Intern</option>
@@ -272,7 +272,7 @@ const MemberManager = () => {
                     </div>
 
                     {/* Personal & Salary */}
-                    <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1rem', color: 'var(--text-accent)' }}>Personal & Salary</div>
+                    <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8125rem' }}>Personal & Salary</div>
 
                     <div>
                         <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Mobile Number</label>
@@ -288,10 +288,10 @@ const MemberManager = () => {
                     </div>
 
                     {/* Rule Sets Selector */}
-                    <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1rem', color: 'var(--text-accent)' }}>Attendance Profile</div>
+                    <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8125rem' }}>Attendance Profile</div>
                     <div style={{ gridColumn: '1 / -1' }}>
                         <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Shift / Rule Set</label>
-                        <select value={selectedRuleId} onChange={(e) => setSelectedRuleId(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', color: 'white', border: 'var(--glass-border)' }}>
+                        <select value={selectedRuleId} onChange={(e) => setSelectedRuleId(e.target.value)}>
                             {ruleSets.length === 0 && <option value="">Default (No Rules Found)</option>}
                             {ruleSets.map(r => (
                                 <option key={r.id} value={r.id}>{r.name} ({r.startTime} - {r.endTime})</option>
@@ -300,14 +300,13 @@ const MemberManager = () => {
                     </div>
 
                     {/* Attendance Location */}
-                    <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1rem', color: 'var(--text-accent)' }}>Attendance Location</div>
+                    <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8125rem' }}>Attendance Location</div>
                     <div style={{ gridColumn: '1 / -1' }}>
                         <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Location</label>
                         <select
                             value={selectedLocationId}
                             onChange={(e) => setSelectedLocationId(e.target.value)}
                             required={locations.length > 0}
-                            style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', color: 'white', border: 'var(--glass-border)' }}
                         >
                             <option value="">Select location</option>
                             {locations.map(location => (
@@ -322,7 +321,7 @@ const MemberManager = () => {
                     </div>
 
                     {/* Bank Details */}
-                    <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1rem', color: 'var(--text-accent)' }}>Bank Details</div>
+                    <div style={{ gridColumn: '1 / -1', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1rem', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8125rem' }}>Bank Details</div>
 
                     <div>
                         <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Account Holder</label>
@@ -338,7 +337,7 @@ const MemberManager = () => {
                     </div>
 
                     <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
-                        <button disabled={loading} type="submit" style={{ width: '100%', background: editMode ? 'var(--color-present)' : 'var(--text-accent)', color: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '46px', border: 'none', fontSize: '1rem', fontWeight: 'bold' }}>
+                        <button disabled={loading} type="submit" className={editMode ? 'btn-success' : ''} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '46px', fontSize: '1rem', fontWeight: 'bold' }}>
                             {editMode ? <FaCheck /> : <FaUserPlus />}
                             {loading ? 'Processing...' : (editMode ? 'Update Staff Details' : 'Create Staff Profile')}
                         </button>
@@ -353,7 +352,7 @@ const MemberManager = () => {
                     <div className="table-scroll">
                     <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
                         <thead>
-                            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left', color: 'var(--text-secondary)' }}>
+                            <tr>
                                 <th style={{ padding: '1rem' }}>Photo</th>
                                 <th style={{ padding: '1rem' }}>Name</th>
                                 <th style={{ padding: '1rem' }}>Role</th>
@@ -364,7 +363,7 @@ const MemberManager = () => {
                         </thead>
                         <tbody>
                             {members.map(member => (
-                                <tr key={member.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: editingId === member.id ? 'rgba(255,255,255,0.05)' : 'transparent' }}>
+                                <tr key={member.id} style={{ background: editingId === member.id ? 'var(--primary-light)' : 'transparent' }}>
                                     <td style={{ padding: '1rem' }}>
                                         <div
                                             onClick={() => handleImageClick(member.id)}
@@ -374,12 +373,12 @@ const MemberManager = () => {
                                                 borderRadius: '50%',
                                                 overflow: 'hidden',
                                                 cursor: 'pointer',
-                                                background: 'rgba(255,255,255,0.1)',
+                                                background: 'var(--bg-secondary)',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 position: 'relative',
-                                                border: '2px solid rgba(255,255,255,0.2)'
+                                                border: '2px solid var(--border-color)'
                                             }}
                                             title="Click to upload photo"
                                         >
@@ -396,7 +395,7 @@ const MemberManager = () => {
                                                 position: 'absolute',
                                                 bottom: '-2px',
                                                 right: '-2px',
-                                                background: 'var(--text-accent)',
+                                                background: 'var(--primary)',
                                                 borderRadius: '50%',
                                                 width: '18px',
                                                 height: '18px',
@@ -404,14 +403,15 @@ const MemberManager = () => {
                                                 alignItems: 'center',
                                                 justifyContent: 'center'
                                             }}>
-                                                <FaCamera style={{ color: '#0f172a', fontSize: '0.6rem' }} />
+                                                <FaCamera style={{ color: 'white', fontSize: '0.6rem' }} />
                                             </div>
                                         </div>
                                     </td>
                                     <td style={{ padding: '1rem', fontWeight: 500 }}>{member.name}</td>
                                     <td style={{ padding: '1rem' }}>
                                         <span style={{
-                                            background: 'rgba(255,255,255,0.1)',
+                                            background: 'var(--primary-light)',
+                                            color: 'var(--primary)',
                                             padding: '0.2rem 0.6rem',
                                             borderRadius: '20px',
                                             fontSize: '0.8rem'
@@ -428,14 +428,14 @@ const MemberManager = () => {
                                     <td style={{ padding: '1rem', textAlign: 'right', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                                         <button
                                             onClick={() => handleEdit(member)}
-                                            style={{ color: 'var(--text-accent)', border: 'none', padding: '0.5rem', background: 'rgba(56, 189, 248, 0.1)', borderRadius: '6px', cursor: 'pointer' }}
+                                            className="btn-secondary" style={{ padding: '0.5rem', minWidth: 'unset' }}
                                             title="Edit Staff"
                                         >
                                             <FaEdit />
                                         </button>
                                         <button
                                             onClick={() => removeMember(member.id)}
-                                            style={{ color: 'var(--color-absent)', border: 'none', padding: '0.5rem', background: 'rgba(248, 113, 113, 0.1)', borderRadius: '6px', cursor: 'pointer' }}
+                                            className="btn-danger" style={{ padding: '0.5rem', minWidth: 'unset' }}
                                             title="Remove Staff"
                                         >
                                             <FaTrash />

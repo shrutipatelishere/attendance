@@ -21,7 +21,7 @@ const History = () => {
                     <div className="table-scroll">
                     <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '480px' }}>
                         <thead>
-                            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left' }}>
+                            <tr style={{ borderBottom: '2px solid var(--border-color)', textAlign: 'left' }}>
                                 <th style={{ padding: '1rem' }}>Date</th>
                                 <th style={{ padding: '1rem' }}>Total</th>
                                 <th style={{ padding: '1rem', color: 'var(--color-present)' }}>Present</th>
@@ -33,7 +33,7 @@ const History = () => {
                             {dates.map(dateStr => {
                                 const stats = getStats(dateStr);
                                 return (
-                                    <tr key={dateStr} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <tr key={dateStr} style={{ borderBottom: '1px solid var(--border-color)' }}>
                                         <td style={{ padding: '1rem', fontWeight: 500 }}>
                                             {format(new Date(dateStr), 'MMM dd, yyyy')}
                                             <div style={{ fontSize: '0.8em', color: 'var(--text-secondary)' }}>{format(new Date(dateStr), 'EEEE')}</div>

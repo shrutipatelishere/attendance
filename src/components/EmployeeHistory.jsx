@@ -112,7 +112,7 @@ const EmployeeHistory = () => {
                     onChange={(e) => setCurrentMonthStr(e.target.value)}
                     style={{
                         background: 'var(--bg-card)',
-                        border: 'var(--glass-border)',
+                        border: '1px solid var(--border-color)',
                         color: 'white',
                         padding: '0.5rem',
                         borderRadius: '8px',
@@ -123,9 +123,9 @@ const EmployeeHistory = () => {
 
             {/* Salary Card (New) */}
             {salary > 0 && (
-                <div className="glass-panel" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)' }}>
+                <div className="glass-panel" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', background: 'var(--primary-light)' }}>
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                        <div style={{ padding: '0.8rem', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}>
+                        <div style={{ padding: '0.8rem', background: 'var(--primary)', borderRadius: '50%' }}>
                             <FaWallet size={20} color="white" />
                         </div>
                         <div>
@@ -159,7 +159,7 @@ const EmployeeHistory = () => {
                 ) : (
                     <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '500px' }}>
                         <thead>
-                            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left', color: 'var(--text-secondary)' }}>
+                            <tr style={{ borderBottom: '2px solid var(--border-color)', textAlign: 'left', color: 'var(--text-secondary)' }}>
                                 <th style={{ padding: '1rem' }}>Date</th>
                                 <th style={{ padding: '1rem' }}>In</th>
                                 <th style={{ padding: '1rem' }}>Out</th>
@@ -168,7 +168,7 @@ const EmployeeHistory = () => {
                         </thead>
                         <tbody>
                             {historyList.map((item) => (
-                                <tr key={item.date.toString()} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                <tr key={item.date.toString()} style={{ borderBottom: '1px solid var(--border-color)' }}>
                                     <td style={{ padding: '1rem' }}>
                                         <div style={{ fontWeight: 500 }}>{format(item.date, 'MMM dd')}</div>
                                         <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{format(item.date, 'EEE')}</div>

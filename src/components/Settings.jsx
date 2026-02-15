@@ -520,7 +520,7 @@ const Settings = () => {
                     {dataStats && (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                             <div style={{ background: 'var(--bg-hover)', padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-accent)' }}>{dataStats.totalStaff}</div>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>{dataStats.totalStaff}</div>
                                 <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Staff Members</div>
                             </div>
                             <div style={{ background: 'var(--bg-hover)', padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
@@ -554,7 +554,7 @@ const Settings = () => {
                     {/* Import Section */}
                     <div style={{ background: 'var(--bg-hover)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1rem', border: '1px solid var(--border-color)' }}>
                         <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <FaUpload style={{ color: 'var(--text-accent)' }} /> Import Data
+                            <FaUpload style={{ color: 'var(--primary)' }} /> Import Data
                         </h4>
                         <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', margin: '0 0 1rem 0' }}>
                             Load data from a previously exported JSON file. This will <strong>replace all current data</strong>.

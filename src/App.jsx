@@ -34,7 +34,7 @@ const PrivateRoute = ({ children, requireAdmin }) => {
 // Layout wrapper to keep Navbar consistent
 const Layout = ({ children }) => {
   return (
-    <div className="app-container animate-fade-in">
+    <div className="app-container">
       <Navbar />
       <main style={{
         maxWidth: '1400px',

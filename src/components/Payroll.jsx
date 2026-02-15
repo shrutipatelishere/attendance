@@ -153,14 +153,14 @@ const Payroll = () => {
                     </p>
                 </div>
                 <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <Link to="/settings" style={{ color: 'var(--text-secondary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', whiteSpace: 'nowrap' }}>
+                    <Link to="/settings" style={{ color: 'var(--text-secondary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', whiteSpace: 'nowrap' }}>
                         <FaCog /> Rules
                     </Link>
                     <input
                         type="month"
                         value={currentMonthStr}
                         onChange={(e) => setCurrentMonthStr(e.target.value)}
-                        style={{ background: 'var(--bg-card)', border: 'var(--glass-border)', color: 'white', padding: '0.5rem 1rem', borderRadius: '8px', minWidth: '0' }}
+                        style={{ width: 'auto', minWidth: '0' }}
                     />
                 </div>
             </div>
@@ -181,7 +181,7 @@ const Payroll = () => {
                 </div>
                 <div className="glass-panel" style={{ textAlign: 'center', padding: '1.5rem' }}>
                     <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Estimated Payout</span>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--text-accent)' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary)' }}>
                         ₹{totalPayout.toLocaleString('en-IN')}
                     </div>
                 </div>
@@ -198,7 +198,7 @@ const Payroll = () => {
                 <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '900px' }}>
                         <thead>
-                            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left', color: 'var(--text-secondary)', background: 'rgba(0,0,0,0.2)' }}>
+                            <tr>
                                 <th style={{ padding: '1rem' }}>Employee</th>
                                 <th style={{ padding: '1rem' }}>Designation</th>
                                 <th style={{ padding: '1rem', textAlign: 'center' }}>Monthly Salary</th>
@@ -211,7 +211,7 @@ const Payroll = () => {
                         </thead>
                         <tbody>
                             {payrollData.map(item => (
-                                <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                <tr key={item.id}>
                                     <td style={{ padding: '1rem' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                             <div style={{
@@ -219,7 +219,7 @@ const Payroll = () => {
                                                 height: '40px',
                                                 borderRadius: '50%',
                                                 overflow: 'hidden',
-                                                background: 'rgba(255,255,255,0.1)',
+                                                background: 'var(--bg-secondary)',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
@@ -238,18 +238,7 @@ const Payroll = () => {
                                         </div>
                                     </td>
                                     <td style={{ padding: '1rem' }}>
-                                        <span style={{
-                                            background: item.role === 'Manager' ? 'rgba(139, 92, 246, 0.2)' :
-                                                       item.role === 'Intern' ? 'rgba(251, 191, 36, 0.2)' :
-                                                       'rgba(56, 189, 248, 0.2)',
-                                            color: item.role === 'Manager' ? '#a78bfa' :
-                                                   item.role === 'Intern' ? '#fbbf24' :
-                                                   'var(--text-accent)',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '20px',
-                                            fontSize: '0.8rem',
-                                            fontWeight: '500'
-                                        }}>
+                                        <span className="badge badge-primary">
                                             {item.role || 'Employee'}
                                         </span>
                                     </td>
@@ -257,50 +246,22 @@ const Payroll = () => {
                                         ₹{item.salary.toLocaleString('en-IN')}
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                        <span style={{
-                                            background: 'rgba(74, 222, 128, 0.2)',
-                                            color: 'var(--color-present)',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '20px',
-                                            fontSize: '0.875rem',
-                                            fontWeight: '600'
-                                        }}>
+                                        <span className="badge badge-success">
                                             {item.presentDays - item.holidays - item.weeklyOffs}
                                         </span>
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                        <span style={{
-                                            background: item.absentDays > 0 ? 'rgba(248, 113, 113, 0.2)' : 'rgba(255,255,255,0.05)',
-                                            color: item.absentDays > 0 ? 'var(--color-absent)' : 'var(--text-secondary)',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '20px',
-                                            fontSize: '0.875rem',
-                                            fontWeight: '600'
-                                        }}>
+                                        <span className={`badge ${item.absentDays > 0 ? 'badge-danger' : 'badge-primary'}`}>
                                             {item.absentDays}
                                         </span>
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                        <span style={{
-                                            background: item.halfDays > 0 ? 'rgba(251, 191, 36, 0.2)' : 'rgba(255,255,255,0.05)',
-                                            color: item.halfDays > 0 ? '#fbbf24' : 'var(--text-secondary)',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '20px',
-                                            fontSize: '0.875rem',
-                                            fontWeight: '600'
-                                        }}>
+                                        <span className={`badge ${item.halfDays > 0 ? 'badge-warning' : 'badge-primary'}`}>
                                             {item.halfDays}
                                         </span>
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                        <span style={{
-                                            background: 'rgba(139, 92, 246, 0.2)',
-                                            color: '#a78bfa',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '20px',
-                                            fontSize: '0.875rem',
-                                            fontWeight: '600'
-                                        }}>
+                                        <span className="badge badge-primary">
                                             {item.holidays + item.weeklyOffs}
                                         </span>
                                     </td>
@@ -316,7 +277,7 @@ const Payroll = () => {
                             ))}
                         </tbody>
                         <tfoot>
-                            <tr style={{ background: 'rgba(0,0,0,0.3)', borderTop: '2px solid rgba(255,255,255,0.1)' }}>
+                            <tr style={{ background: 'var(--bg-secondary)', borderTop: '2px solid var(--border-color)' }}>
                                 <td colSpan="2" style={{ padding: '1rem', fontWeight: '600', color: 'var(--text-primary)' }}>
                                     TOTAL ({members.length} employees)
                                 </td>
@@ -324,7 +285,7 @@ const Payroll = () => {
                                     ₹{totalSalary.toLocaleString('en-IN')}
                                 </td>
                                 <td colSpan="4" style={{ padding: '1rem' }}></td>
-                                <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 'bold', fontSize: '1.25rem', color: 'var(--text-accent)' }}>
+                                <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 'bold', fontSize: '1.25rem', color: 'var(--primary)' }}>
                                     ₹{totalPayout.toLocaleString('en-IN')}
                                 </td>
                             </tr>
@@ -334,11 +295,11 @@ const Payroll = () => {
             </div>
 
             {/* Legend */}
-            <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', display: 'flex', flexWrap: 'wrap', gap: '1.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                <div><span style={{ color: 'var(--color-present)' }}>Present</span> = Full working days</div>
-                <div><span style={{ color: 'var(--color-absent)' }}>Absent</span> = No attendance / Short hours</div>
-                <div><span style={{ color: '#fbbf24' }}>Half Days</span> = {'>'}4 hrs but {'<'}8 hrs (counted as 0.5)</div>
-                <div><span style={{ color: '#a78bfa' }}>Holidays/Offs</span> = Paid holidays + Weekly offs</div>
+            <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: '8px', display: 'flex', flexWrap: 'wrap', gap: '1.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                <div><span style={{ color: 'var(--success)' }}>Present</span> = Full working days</div>
+                <div><span style={{ color: 'var(--danger)' }}>Absent</span> = No attendance / Short hours</div>
+                <div><span style={{ color: 'var(--warning)' }}>Half Days</span> = {'>'}4 hrs but {'<'}8 hrs (counted as 0.5)</div>
+                <div><span style={{ color: 'var(--primary)' }}>Holidays/Offs</span> = Paid holidays + Weekly offs</div>
             </div>
         </div>
     );
