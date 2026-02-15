@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAttendance } from '../context/AttendanceContext';
-import { FaCog, FaCalendarAlt, FaClock, FaPlus, FaTrash, FaMapMarkerAlt, FaRedo, FaDatabase, FaDownload, FaUpload, FaCheck } from 'react-icons/fa';
-import { fsExportAllData, fsImportAllData, fsDownloadDataAsJson, fsGetDataStats } from '../firestoreService';
+import { FaCog, FaCalendarAlt, FaClock, FaPlus, FaTrash, FaMapMarkerAlt, FaCheck } from 'react-icons/fa';
 
 const Settings = () => {
     const { settings: contextSettings, updateSettings } = useAttendance();
@@ -14,8 +13,6 @@ const Settings = () => {
     const [newHoliday, setNewHoliday] = useState('');
     const [msg, setMsg] = useState('');
     const [activeTab, setActiveTab] = useState('rules');
-    const [dataStats, setDataStats] = useState(null);
-    const fileInputRef = useRef(null);
 
     useEffect(() => {
         // Load settings from context
@@ -36,9 +33,6 @@ const Settings = () => {
             locations: contextSettings.locations || []
         });
         setLoading(false);
-
-        // Load data stats
-        fsGetDataStats().then(stats => setDataStats(stats)).catch(console.error);
     }, [contextSettings]);
 
     const saveSettings = async () => {
@@ -51,49 +45,6 @@ const Settings = () => {
             console.error("Error saving settings:", error);
             setMsg('Failed to save.');
         }
-    };
-
-    const handleResetDemo = () => {
-        alert('Reset to demo is not available in Firebase mode. Use the Import feature to restore data from a backup.');
-    };
-
-    const handleExport = async () => {
-        try {
-            await fsDownloadDataAsJson();
-            setMsg('Data exported successfully! Check your downloads folder.');
-            setTimeout(() => setMsg(''), 3000);
-        } catch (error) {
-            console.error('Export error:', error);
-            setMsg('Failed to export data.');
-        }
-    };
-
-    const handleImportClick = () => {
-        fileInputRef.current?.click();
-    };
-
-    const handleImportFile = (event) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            try {
-                const data = JSON.parse(e.target.result);
-                if (window.confirm(`Import data from "${file.name}"?\n\nThis will replace ALL current data. This action cannot be undone.`)) {
-                    await fsImportAllData(data);
-                    setMsg('Data imported successfully! Refreshing...');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                }
-            } catch (error) {
-                console.error('Import error:', error);
-                setMsg('Failed to import: ' + error.message);
-            }
-        };
-        reader.readAsText(file);
-        event.target.value = '';
     };
 
     const addHoliday = () => {
@@ -172,15 +123,6 @@ const Settings = () => {
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            {/* Hidden file input for import */}
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImportFile}
-                accept=".json"
-                style={{ display: 'none' }}
-            />
-
             <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                     <h1 style={{
@@ -195,7 +137,7 @@ const Settings = () => {
                         <FaCog style={{ color: 'var(--primary)' }} /> Settings
                     </h1>
                     <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                        Configure shift rules, holidays, locations, and manage data
+                        Configure shift rules, holidays, and locations
                     </p>
                 </div>
             </div>
@@ -239,13 +181,6 @@ const Settings = () => {
                     style={{ flex: 1 }}
                 >
                     <FaMapMarkerAlt /> Locations
-                </button>
-                <button
-                    className={`tab-button ${activeTab === 'data' ? 'active' : ''}`}
-                    onClick={() => { setActiveTab('data'); fsGetDataStats().then(stats => setDataStats(stats)).catch(console.error); }}
-                    style={{ flex: 1 }}
-                >
-                    <FaDatabase /> Data
                 </button>
             </div>
 
@@ -507,96 +442,11 @@ const Settings = () => {
                 </div>
             )}
 
-            {activeTab === 'data' && (
-                <div className="card">
-                    <h3 style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)', fontSize: '1.125rem', fontWeight: '600' }}>
-                        <FaDatabase style={{ color: 'var(--primary)' }} /> Data Management
-                    </h3>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                        Export your data to share with others or import data from a backup file.
-                    </p>
-
-                    {/* Data Stats */}
-                    {dataStats && (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-                            <div style={{ background: 'var(--bg-hover)', padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>{dataStats.totalStaff}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Staff Members</div>
-                            </div>
-                            <div style={{ background: 'var(--bg-hover)', padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-present)' }}>{dataStats.totalAttendanceDays}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Attendance Days</div>
-                            </div>
-                            <div style={{ background: 'var(--bg-hover)', padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#fbbf24' }}>{dataStats.totalMissPunchRequests}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Miss Punch Requests</div>
-                            </div>
-                            <div style={{ background: 'var(--bg-hover)', padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#a78bfa' }}>Firebase</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Storage Mode</div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Export Section */}
-                    <div style={{ background: 'var(--bg-hover)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1rem', border: '1px solid var(--border-color)' }}>
-                        <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <FaDownload style={{ color: 'var(--color-present)' }} /> Export Data
-                        </h4>
-                        <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', margin: '0 0 1rem 0' }}>
-                            Download all data (staff, attendance, settings, requests) as a JSON file. Share this file with your client or use it as a backup.
-                        </p>
-                        <button onClick={handleExport} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <FaDownload /> Download JSON File
-                        </button>
-                    </div>
-
-                    {/* Import Section */}
-                    <div style={{ background: 'var(--bg-hover)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1rem', border: '1px solid var(--border-color)' }}>
-                        <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <FaUpload style={{ color: 'var(--primary)' }} /> Import Data
-                        </h4>
-                        <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', margin: '0 0 1rem 0' }}>
-                            Load data from a previously exported JSON file. This will <strong>replace all current data</strong>.
-                        </p>
-                        <button onClick={handleImportClick} className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <FaUpload /> Select JSON File to Import
-                        </button>
-                    </div>
-
-                    {/* Reset Section */}
-                    <div style={{ background: 'rgba(248, 113, 113, 0.1)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(248, 113, 113, 0.3)' }}>
-                        <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--color-absent)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <FaRedo /> Reset to Demo Data
-                        </h4>
-                        <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', margin: '0 0 1rem 0' }}>
-                            Reset all data back to the original demo state. This will delete all changes and cannot be undone.
-                        </p>
-                        <button onClick={handleResetDemo} style={{
-                            background: 'var(--color-absent)',
-                            color: 'white',
-                            border: 'none',
-                            padding: '0.5rem 1rem',
-                            borderRadius: 'var(--radius-md)',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            fontWeight: '500'
-                        }}>
-                            <FaRedo /> Reset All Data
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {activeTab !== 'data' && (
-                <div style={{ marginTop: '2rem', textAlign: 'right' }}>
-                    <button onClick={saveSettings} className="btn-primary" style={{ padding: '0.875rem 2rem', fontSize: '1rem', fontWeight: '600' }}>
-                        Save Changes
-                    </button>
-                </div>
-            )}
+            <div style={{ marginTop: '2rem', textAlign: 'right' }}>
+                <button onClick={saveSettings} className="btn-primary" style={{ padding: '0.875rem 2rem', fontSize: '1rem', fontWeight: '600' }}>
+                    Save Changes
+                </button>
+            </div>
         </div>
     );
 };
