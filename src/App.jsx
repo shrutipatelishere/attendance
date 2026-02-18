@@ -10,6 +10,7 @@ import History from './components/History';
 import Login from './components/Login';
 import EmployeeDashboard from './components/EmployeeDashboard';
 import MissPunchRequests from './components/MissPunchRequests';
+import LeaveRequests from './components/LeaveRequests';
 import Payroll from './components/Payroll';
 import Settings from './components/Settings';
 import MonthlyReport from './components/MonthlyReport';
@@ -122,6 +123,14 @@ function App() {
               <PrivateRoute requireAdmin={true}>
                 <Layout>
                   <MissPunchRequests />
+                </Layout>
+              </PrivateRoute>
+            } />
+
+            <Route path="/leave-requests" element={
+              <PrivateRoute requireAdmin={true}>
+                <Layout>
+                  <LeaveRequests />
                 </Layout>
               </PrivateRoute>
             } />

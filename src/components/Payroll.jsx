@@ -40,6 +40,14 @@ const Payroll = () => {
 
         const today = new Date();
 
+        // Check pay settings: employee override > rule set > default (paid)
+        const isPaidHoliday = member.paidHolidays !== null && member.paidHolidays !== undefined
+            ? member.paidHolidays
+            : userRule?.paidHolidays !== false;
+        const isPaidWeeklyOff = member.paidWeeklyOffs !== null && member.paidWeeklyOffs !== undefined
+            ? member.paidWeeklyOffs
+            : userRule?.paidWeeklyOffs !== false;
+
         days.forEach(day => {
             const dateStr = format(day, 'yyyy-MM-dd');
             const lookupId = member.uid || member.id;
@@ -50,22 +58,34 @@ const Payroll = () => {
             // Skip future days
             if (!isPastOrToday) return;
 
-            // 1. Check if Global Holiday (Paid)
-            if (settings?.holidays?.includes(dateStr)) {
-                presentDays++;
+            // 0. Check per-employee unpaid holiday
+            if ((member.unpaidHolidays || []).includes(dateStr)) {
                 holidays++;
                 return;
             }
 
-            // 2. Check if Weekly Off (Paid Leave)
+            // 0b. Check global unpaid holiday
+            if (settings?.unpaidHolidays?.includes(dateStr)) {
+                holidays++;
+                return;
+            }
+
+            // 1. Check if Global Holiday
+            if (settings?.holidays?.includes(dateStr)) {
+                holidays++;
+                if (isPaidHoliday) presentDays++;
+                return;
+            }
+
+            // 2. Check if Weekly Off
             if (userRule?.weeklyOffs && userRule.weeklyOffs.length > 0) {
                 const dayOfWeek = getDay(day);
                 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 const dayName = dayNames[dayOfWeek];
 
                 if (userRule.weeklyOffs.includes(dayName)) {
-                    presentDays++;
                     weeklyOffs++;
+                    if (isPaidWeeklyOff) presentDays++;
                     return;
                 }
             }

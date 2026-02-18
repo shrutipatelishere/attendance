@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FaCamera, FaHistory, FaExclamationTriangle } from 'react-icons/fa';
+import { FaCamera, FaHistory, FaExclamationTriangle, FaCalendarAlt, FaUserCircle, FaClock } from 'react-icons/fa';
 import SelfieAttendance from './SelfieAttendance';
 import EmployeeHistory from './EmployeeHistory';
 import MissPunch from './MissPunch';
+import LeaveRequest from './LeaveRequest';
+import EmployeeProfile from './EmployeeProfile';
+import Timesheet from './Timesheet';
 
 const EmployeeDashboard = () => {
     const [searchParams] = useSearchParams();
@@ -11,7 +14,7 @@ const EmployeeDashboard = () => {
     const [activeTab, setActiveTab] = useState(tabParam || 'attendance');
 
     useEffect(() => {
-        if (tabParam && ['attendance', 'misspunch', 'history'].includes(tabParam)) {
+        if (tabParam && ['attendance', 'misspunch', 'history', 'leave', 'profile', 'timesheet'].includes(tabParam)) {
             setActiveTab(tabParam);
         }
     }, [tabParam]);
@@ -56,21 +59,62 @@ const EmployeeDashboard = () => {
                         <span className="tab-label">Miss Punch</span>
                     </button>
                     <button
+                        className={`tab-button ${activeTab === 'leave' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('leave')}
+                    >
+                        <FaCalendarAlt />
+                        <span className="tab-label">Leave</span>
+                    </button>
+                    <button
                         className={`tab-button ${activeTab === 'history' ? 'active' : ''}`}
                         onClick={() => setActiveTab('history')}
                     >
                         <FaHistory />
                         <span className="tab-label">History</span>
                     </button>
+                    <button
+                        className={`tab-button ${activeTab === 'timesheet' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('timesheet')}
+                    >
+                        <FaClock />
+                        <span className="tab-label">Timesheet</span>
+                    </button>
+                    <button
+                        className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('profile')}
+                    >
+                        <FaUserCircle />
+                        <span className="tab-label">Profile</span>
+                    </button>
                 </div>
 
                 {/* Tab Content */}
                 <div className="tab-content">
-                    {activeTab === 'attendance' && <SelfieAttendance />}
+                    {activeTab === 'attendance' && (
+                        <>
+                            <SelfieAttendance />
+                            <div style={{ padding: '0 1.5rem 1.5rem', textAlign: 'center' }}>
+                                <button
+                                    onClick={() => setActiveTab('timesheet')}
+                                    className="btn-secondary"
+                                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem' }}
+                                >
+                                    <FaClock /> Fill Timesheet
+                                </button>
+                            </div>
+                        </>
+                    )}
                     {activeTab === 'misspunch' && <MissPunch />}
+                    {activeTab === 'leave' && <LeaveRequest />}
                     {activeTab === 'history' && (
                         <div style={{ padding: '1.5rem' }}>
                             <EmployeeHistory />
+                        </div>
+                    )}
+                    {activeTab === 'timesheet' && <Timesheet />}
+                    {activeTab === 'profile' && (
+                        <div style={{ padding: '1.5rem' }}>
+                            <EmployeeProfile />
                         </div>
                     )}
                 </div>

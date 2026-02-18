@@ -5,7 +5,7 @@ import { FaCheckCircle, FaTimesCircle, FaClock, FaUserMinus, FaUndo, FaUsers, Fa
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-    const { members, markAttendance, resetAttendance, getDayStatus, getStats, markAll, calculateDetailedStatus, settings } = useAttendance();
+    const { members, markAttendance, resetAttendance, getDayStatus, getStats, markAll, calculateDetailedStatus, settings, updateSettings, updateMember } = useAttendance();
     const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
 
     // Edit Modal State
@@ -20,11 +20,44 @@ const Dashboard = () => {
     const dayStatus = getDayStatus(selectedDate);
     const stats = getStats(selectedDate);
 
-    // Check if selected date is a global holiday
+    // Check if selected date is a global holiday (paid or unpaid)
     const isGlobalHoliday = settings?.holidays?.includes(selectedDate);
+    const isUnpaidHoliday = settings?.unpaidHolidays?.includes(selectedDate);
+
+    const toggleUnpaidHoliday = async () => {
+        const unpaid = settings.unpaidHolidays || [];
+        let updated;
+        if (isUnpaidHoliday) {
+            updated = unpaid.filter(d => d !== selectedDate);
+        } else {
+            updated = [...unpaid, selectedDate].sort();
+        }
+        await updateSettings({ ...settings, unpaidHolidays: updated });
+    };
+
+    const toggleEmployeeUnpaidHoliday = async (member) => {
+        const dates = member.unpaidHolidays || [];
+        const has = dates.includes(selectedDate);
+        const updated = has ? dates.filter(d => d !== selectedDate) : [...dates, selectedDate].sort();
+        await updateMember(member.id, { unpaidHolidays: updated });
+    };
+
+    const isEmployeeUnpaidHoliday = (member) => {
+        return (member.unpaidHolidays || []).includes(selectedDate);
+    };
 
     const getDetailedStatus = (member, raw) => {
-        // Check if it's a global holiday
+        // Check per-employee unpaid holiday first
+        if (isEmployeeUnpaidHoliday(member)) {
+            return { status: 'holiday', label: 'Holiday (Unpaid)', color: 'var(--text-secondary)' };
+        }
+
+        // Check if it's a global unpaid holiday
+        if (isUnpaidHoliday) {
+            return { status: 'holiday', label: 'Holiday (Unpaid)', color: 'var(--text-secondary)' };
+        }
+
+        // Check if it's a global paid holiday
         if (isGlobalHoliday) {
             return { status: 'holiday', label: 'Holiday (Paid)', color: 'var(--success)' };
         }
@@ -105,10 +138,10 @@ const Dashboard = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative' }}>
 
             {/* Header Section */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                 <div style={{ minWidth: 0 }}>
-                    <h1 style={{ margin: 0, fontSize: '1.875rem', fontWeight: '700', color: 'var(--text-primary)' }}>Dashboard</h1>
-                    <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem', fontSize: '0.875rem' }}>Overview for {format(new Date(selectedDate), 'MMMM dd, yyyy')}</p>
+                    <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-primary)' }}>Dashboard</h1>
+                    <p style={{ color: 'var(--text-secondary)', margin: '0.25rem 0 0', fontSize: '0.8rem' }}>{format(new Date(selectedDate), 'MMMM dd, yyyy')}</p>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -118,9 +151,16 @@ const Dashboard = () => {
                         onChange={(e) => setSelectedDate(e.target.value)}
                         style={{ width: 'auto' }}
                     />
+                    <button
+                        onClick={toggleUnpaidHoliday}
+                        className={isUnpaidHoliday ? 'btn-danger' : 'btn-secondary'}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', whiteSpace: 'nowrap', fontSize: '0.75rem', padding: '0.4rem 0.625rem' }}
+                    >
+                        <FaExclamationCircle /> {isUnpaidHoliday ? 'Remove UH' : 'Unpaid Holiday'}
+                    </button>
                     <Link to="/staff" style={{ textDecoration: 'none' }}>
-                        <button style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', whiteSpace: 'nowrap' }}>
-                            <FaPlus /> Add Staff
+                        <button style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', whiteSpace: 'nowrap', fontSize: '0.75rem', padding: '0.4rem 0.625rem' }}>
+                            <FaPlus /> Staff
                         </button>
                     </Link>
                 </div>
@@ -340,210 +380,145 @@ const Dashboard = () => {
                         <p style={{ margin: 0 }}>No staff found. Go to Staff tab to add employees.</p>
                     </div>
                 ) : (
-                    <div style={{ overflowX: 'auto' }}>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                    <th>Selfies</th>
-                                    <th>Time Log</th>
-                                    <th style={{ textAlign: 'right' }}>Controls</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {members.map(member => {
-                                const lookupId = member.uid || member.id;
-                                const raw = dayStatus[lookupId];
-                                const computed = getDetailedStatus(member, raw);
+                    <div>
+                        {members.map(member => {
+                            const lookupId = member.uid || member.id;
+                            const raw = dayStatus[lookupId];
+                            const computed = getDetailedStatus(member, raw);
 
-                                let times = '-';
-                                let durationStr = '';
+                            let times = '-';
+                            let durationStr = '';
 
-                                const hasSelfieIn = raw && typeof raw === 'object' && raw.selfieIn?.dataUrl;
-                                const hasSelfieOut = raw && typeof raw === 'object' && raw.selfieOut?.dataUrl;
+                            const hasSelfieIn = raw && typeof raw === 'object' && raw.selfieIn?.dataUrl;
+                            const hasSelfieOut = raw && typeof raw === 'object' && raw.selfieOut?.dataUrl;
 
-                                if (raw && typeof raw === 'object' && raw.punchIn) {
-                                    times = `${raw.punchIn} - ${raw.punchOut || '...'}`;
-                                    if (raw.punchOut) {
-                                        try {
-                                            const today = new Date();
-                                            const pIn = parse(raw.punchIn, 'HH:mm:ss', today);
-                                            const pOut = parse(raw.punchOut, 'HH:mm:ss', today);
-                                            const diff = differenceInMinutes(pOut, pIn);
-                                            const hrs = Math.floor(diff / 60);
-                                            const mins = diff % 60;
-                                            durationStr = `${hrs}h ${mins}m`;
-                                        } catch (e) { }
-                                    }
+                            if (raw && typeof raw === 'object' && raw.punchIn) {
+                                times = `${raw.punchIn} - ${raw.punchOut || '...'}`;
+                                if (raw.punchOut) {
+                                    try {
+                                        const today = new Date();
+                                        const pIn = parse(raw.punchIn, 'HH:mm:ss', today);
+                                        const pOut = parse(raw.punchOut, 'HH:mm:ss', today);
+                                        const diff = differenceInMinutes(pOut, pIn);
+                                        const hrs = Math.floor(diff / 60);
+                                        const mins = diff % 60;
+                                        durationStr = `${hrs}h ${mins}m`;
+                                    } catch (e) { }
                                 }
+                            }
 
-                                return (
-                                    <tr key={member.id}>
-                                        <td style={{ fontWeight: '500', color: 'var(--text-primary)' }}>
-                                            {member.name}
-                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.125rem' }}>
-                                                {member.role || 'Employee'}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className={`badge ${
-                                                computed.status === 'present' || computed.status === 'working' || computed.status === 'holiday' || computed.status === 'weeklyoff' ? 'badge-success' :
-                                                computed.status === 'absent' || computed.status === 'short' ? 'badge-danger' :
-                                                computed.status === 'late' || computed.status === 'halfday' ? 'badge-warning' :
-                                                'badge-primary'
-                                            }`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.375rem' }}>
-                                                {computed.status === 'present' && <FaCheckCircle />}
-                                                {computed.status === 'working' && <FaClock />}
-                                                {computed.status === 'halfday' && <FaExclamationCircle />}
-                                                {computed.status === 'short' && <FaTimesCircle />}
-                                                {computed.status === 'absent' && <FaTimesCircle />}
-                                                {computed.status === 'late' && <FaClock />}
-                                                {(computed.status === 'holiday' || computed.status === 'weeklyoff') && <FaCheckCircle />}
-                                                {!computed.status && <FaUserMinus />}
-                                                {computed.label}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                {/* Selfie In Thumbnail */}
-                                                <div
-                                                    onClick={() => hasSelfieIn && setPreviewSelfie({ dataUrl: raw.selfieIn.dataUrl, type: 'in', time: raw.punchIn })}
-                                                    style={{
-                                                        width: '40px',
-                                                        height: '40px',
-                                                        borderRadius: '8px',
-                                                        overflow: 'hidden',
-                                                        background: hasSelfieIn ? 'transparent' : 'var(--bg-secondary)',
-                                                        border: hasSelfieIn ? '2px solid var(--success)' : '2px dashed var(--border-color)',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        cursor: hasSelfieIn ? 'pointer' : 'default',
-                                                        position: 'relative'
-                                                    }}
-                                                    title={hasSelfieIn ? 'View Punch In Selfie' : 'No Punch In Selfie'}
-                                                >
-                                                    {hasSelfieIn ? (
-                                                        <>
-                                                            <img
-                                                                src={raw.selfieIn.dataUrl}
-                                                                alt="In"
-                                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                            />
-                                                            <div style={{
-                                                                position: 'absolute',
-                                                                bottom: '-2px',
-                                                                right: '-2px',
-                                                                background: 'var(--success)',
-                                                                color: 'white',
-                                                                fontSize: '0.5rem',
-                                                                padding: '1px 3px',
-                                                                borderRadius: '3px',
-                                                                fontWeight: 'bold'
-                                                            }}>IN</div>
-                                                        </>
-                                                    ) : (
-                                                        <FaImage style={{ color: 'var(--text-muted)', fontSize: '0.875rem', opacity: 0.4 }} />
-                                                    )}
-                                                </div>
+                            return (
+                                <div key={member.id} style={{ padding: '0.875rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
+                                    {/* Row 1: Name + Status */}
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.9375rem' }}>{member.name}</div>
+                                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{member.role || 'Employee'}</div>
+                                        </div>
+                                        <span className={`badge ${
+                                            computed.status === 'present' || computed.status === 'working' || computed.status === 'holiday' || computed.status === 'weeklyoff' ? 'badge-success' :
+                                            computed.status === 'absent' || computed.status === 'short' ? 'badge-danger' :
+                                            computed.status === 'late' || computed.status === 'halfday' ? 'badge-warning' :
+                                            'badge-primary'
+                                        }`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem' }}>
+                                            {computed.status === 'present' && <FaCheckCircle />}
+                                            {computed.status === 'working' && <FaClock />}
+                                            {computed.status === 'halfday' && <FaExclamationCircle />}
+                                            {computed.status === 'short' && <FaTimesCircle />}
+                                            {computed.status === 'absent' && <FaTimesCircle />}
+                                            {computed.status === 'late' && <FaClock />}
+                                            {(computed.status === 'holiday' || computed.status === 'weeklyoff') && <FaCheckCircle />}
+                                            {!computed.status && <FaUserMinus />}
+                                            {computed.label}
+                                        </span>
+                                    </div>
 
-                                                {/* Selfie Out Thumbnail */}
-                                                <div
-                                                    onClick={() => hasSelfieOut && setPreviewSelfie({ dataUrl: raw.selfieOut.dataUrl, type: 'out', time: raw.punchOut })}
-                                                    style={{
-                                                        width: '40px',
-                                                        height: '40px',
-                                                        borderRadius: '8px',
-                                                        overflow: 'hidden',
-                                                        background: hasSelfieOut ? 'transparent' : 'var(--bg-secondary)',
-                                                        border: hasSelfieOut ? '2px solid var(--danger)' : '2px dashed var(--border-color)',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        cursor: hasSelfieOut ? 'pointer' : 'default',
-                                                        position: 'relative'
-                                                    }}
-                                                    title={hasSelfieOut ? 'View Punch Out Selfie' : 'No Punch Out Selfie'}
-                                                >
-                                                    {hasSelfieOut ? (
-                                                        <>
-                                                            <img
-                                                                src={raw.selfieOut.dataUrl}
-                                                                alt="Out"
-                                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                            />
-                                                            <div style={{
-                                                                position: 'absolute',
-                                                                bottom: '-2px',
-                                                                right: '-2px',
-                                                                background: 'var(--danger)',
-                                                                color: 'white',
-                                                                fontSize: '0.5rem',
-                                                                padding: '1px 3px',
-                                                                borderRadius: '3px',
-                                                                fontWeight: 'bold'
-                                                            }}>OUT</div>
-                                                        </>
-                                                    ) : (
-                                                        <FaImage style={{ color: 'var(--text-muted)', fontSize: '0.875rem', opacity: 0.4 }} />
-                                                    )}
-                                                </div>
+                                    {/* Row 2: Selfies + Time + Controls */}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', flexWrap: 'wrap' }}>
+                                        {/* Selfies */}
+                                        <div style={{ display: 'flex', gap: '0.375rem', flexShrink: 0 }}>
+                                            <div
+                                                onClick={() => hasSelfieIn && setPreviewSelfie({ dataUrl: raw.selfieIn.dataUrl, type: 'in', time: raw.punchIn })}
+                                                style={{
+                                                    width: '34px', height: '34px', borderRadius: '6px', overflow: 'hidden',
+                                                    background: hasSelfieIn ? 'transparent' : 'var(--bg-secondary)',
+                                                    border: hasSelfieIn ? '2px solid var(--success)' : '2px dashed var(--border-color)',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    cursor: hasSelfieIn ? 'pointer' : 'default', position: 'relative'
+                                                }}
+                                            >
+                                                {hasSelfieIn ? (
+                                                    <>
+                                                        <img src={raw.selfieIn.dataUrl} alt="In" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                        <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', background: 'var(--success)', color: 'white', fontSize: '0.45rem', padding: '1px 2px', borderRadius: '2px', fontWeight: 'bold' }}>IN</div>
+                                                    </>
+                                                ) : (
+                                                    <FaImage style={{ color: 'var(--text-muted)', fontSize: '0.75rem', opacity: 0.4 }} />
+                                                )}
                                             </div>
-                                        </td>
-                                        <td style={{ fontFamily: 'monospace', fontSize: '0.8125rem' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                <span>{times}</span>
+                                            <div
+                                                onClick={() => hasSelfieOut && setPreviewSelfie({ dataUrl: raw.selfieOut.dataUrl, type: 'out', time: raw.punchOut })}
+                                                style={{
+                                                    width: '34px', height: '34px', borderRadius: '6px', overflow: 'hidden',
+                                                    background: hasSelfieOut ? 'transparent' : 'var(--bg-secondary)',
+                                                    border: hasSelfieOut ? '2px solid var(--danger)' : '2px dashed var(--border-color)',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    cursor: hasSelfieOut ? 'pointer' : 'default', position: 'relative'
+                                                }}
+                                            >
+                                                {hasSelfieOut ? (
+                                                    <>
+                                                        <img src={raw.selfieOut.dataUrl} alt="Out" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                        <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', background: 'var(--danger)', color: 'white', fontSize: '0.45rem', padding: '1px 2px', borderRadius: '2px', fontWeight: 'bold' }}>OUT</div>
+                                                    </>
+                                                ) : (
+                                                    <FaImage style={{ color: 'var(--text-muted)', fontSize: '0.75rem', opacity: 0.4 }} />
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Time Log */}
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                                                <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{times}</span>
+                                                {durationStr && <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--primary)' }}>({durationStr})</span>}
                                                 <button
                                                     onClick={() => openEdit(member, raw)}
-                                                    title="Edit Times"
                                                     className="btn-secondary"
-                                                    style={{
-                                                        padding: '0.25rem 0.5rem',
-                                                        fontSize: '0.75rem',
-                                                        minWidth: 'unset'
-                                                    }}
+                                                    style={{ padding: '0.2rem 0.375rem', fontSize: '0.65rem', minWidth: 'unset' }}
                                                 >
                                                     <FaEdit />
                                                 </button>
                                             </div>
-                                            {durationStr && (
-                                                <div style={{ fontWeight: '600', color: 'var(--primary)', marginTop: '0.25rem', fontSize: '0.75rem' }}>
-                                                    {durationStr}
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                                <button
-                                                    onClick={() => undoMark(lookupId)}
-                                                    title="Reset"
-                                                    className="btn-secondary"
-                                                    style={{ padding: '0.375rem 0.625rem', fontSize: '0.75rem' }}
-                                                >
-                                                    <FaUndo />
-                                                </button>
-                                                <button
-                                                    onClick={() => forceMark(lookupId, 'present')}
-                                                    className="btn-success"
-                                                    style={{ padding: '0.375rem 0.625rem', fontSize: '0.75rem' }}
-                                                >
-                                                    P
-                                                </button>
-                                                <button
-                                                    onClick={() => forceMark(lookupId, 'absent')}
-                                                    className="btn-danger"
-                                                    style={{ padding: '0.375rem 0.625rem', fontSize: '0.75rem' }}
-                                                >
-                                                    A
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                                        </div>
+
+                                        {/* Controls */}
+                                        <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0 }}>
+                                            <button
+                                                onClick={() => toggleEmployeeUnpaidHoliday(member)}
+                                                className={isEmployeeUnpaidHoliday(member) ? 'btn-danger' : 'btn-secondary'}
+                                                style={{ padding: '0.3rem 0.5rem', fontSize: '0.6rem', fontWeight: 700, minWidth: 'unset' }}
+                                            >UH</button>
+                                            <button
+                                                onClick={() => undoMark(lookupId)}
+                                                className="btn-secondary"
+                                                style={{ padding: '0.3rem 0.5rem', fontSize: '0.65rem', minWidth: 'unset' }}
+                                            ><FaUndo /></button>
+                                            <button
+                                                onClick={() => forceMark(lookupId, 'present')}
+                                                className="btn-success"
+                                                style={{ padding: '0.3rem 0.5rem', fontSize: '0.65rem', minWidth: 'unset' }}
+                                            >P</button>
+                                            <button
+                                                onClick={() => forceMark(lookupId, 'absent')}
+                                                className="btn-danger"
+                                                style={{ padding: '0.3rem 0.5rem', fontSize: '0.65rem', minWidth: 'unset' }}
+                                            >A</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
             </div>

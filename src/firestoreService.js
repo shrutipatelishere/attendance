@@ -129,20 +129,20 @@ export function subscribeSettings(callback) {
 // ─── Miss Punch Requests ─────────────────────────────────
 
 export async function fsGetMissPunchRequestsByUser(userId) {
-  const q = query(collection(db, 'missPunchRequests'), where('userId', '==', userId), orderBy('createdAt', 'desc'));
+  const q = query(collection(db, 'missPunchRequests'), where('userId', '==', userId));
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
 }
 
 export async function fsGetMissPunchRequestsByStatus(status) {
   let q;
   if (status === 'all') {
-    q = query(collection(db, 'missPunchRequests'), orderBy('createdAt', 'desc'));
+    q = query(collection(db, 'missPunchRequests'));
   } else {
-    q = query(collection(db, 'missPunchRequests'), where('status', '==', status), orderBy('createdAt', 'desc'));
+    q = query(collection(db, 'missPunchRequests'), where('status', '==', status));
   }
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
 }
 
 export async function fsAddMissPunchRequest(request) {
@@ -159,6 +159,42 @@ export async function fsAddMissPunchRequest(request) {
 
 export async function fsUpdateMissPunchRequest(id, data) {
   await updateDoc(doc(db, 'missPunchRequests', id), data);
+}
+
+// ─── Leave Requests ─────────────────────────────────────
+
+export async function fsGetLeaveRequestsByUser(userId) {
+  const q = query(collection(db, 'leaveRequests'), where('userId', '==', userId));
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+}
+
+export async function fsGetAllLeaveRequests() {
+  const snap = await getDocs(collection(db, 'leaveRequests'));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+}
+
+export async function fsAddLeaveRequest(request) {
+  const newReq = {
+    ...request,
+    createdAt: new Date().toISOString(),
+    status: 'pending',
+    approvedBy: null,
+    approvedAt: null
+  };
+  const ref = await addDoc(collection(db, 'leaveRequests'), newReq);
+  return { id: ref.id, ...newReq };
+}
+
+export async function fsUpdateLeaveRequest(id, data) {
+  await updateDoc(doc(db, 'leaveRequests', id), data);
+}
+
+export function subscribeLeaveRequests(callback) {
+  return onSnapshot(collection(db, 'leaveRequests'), (snap) => {
+    const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+    callback(list);
+  });
 }
 
 // ─── Data Management ─────────────────────────────────────
@@ -243,4 +279,27 @@ export async function fsDownloadDataAsJson() {
   a.download = `presenz-backup-${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+// ─── Timesheets ──────────────────────────────────────────
+
+export async function fsGetTimesheetsByUser(userId) {
+  const q = query(collection(db, 'timesheets'), where('userId', '==', userId));
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+}
+
+export async function fsAddTimesheet(entry) {
+  return await addDoc(collection(db, 'timesheets'), {
+    ...entry,
+    createdAt: new Date().toISOString()
+  });
+}
+
+export async function fsUpdateTimesheet(id, data) {
+  await updateDoc(doc(db, 'timesheets', id), data);
+}
+
+export async function fsDeleteTimesheet(id) {
+  await deleteDoc(doc(db, 'timesheets', id));
 }

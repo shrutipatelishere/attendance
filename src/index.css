@@ -55,6 +55,25 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Native app feel */
+body, html {
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 body {
@@ -69,7 +88,6 @@ body {
   width: 100%;
   min-width: 0;
   margin: 0 auto;
-  overflow-x: hidden;
 }
 
 /* Button Styles */
@@ -423,7 +441,6 @@ tbody tr:hover {
 .app-container {
   width: 100%;
   min-width: 0;
-  overflow-x: hidden;
 }
 
 /* Table scroll wrapper */
@@ -526,6 +543,11 @@ tbody tr:hover {
   /* Show bottom nav */
   .bottom-nav {
     display: flex;
+  }
+
+  /* Hide top tabs since bottom nav handles navigation */
+  .tabs-header {
+    display: none !important;
   }
 
   /* Add bottom spacing for content above bottom nav */

@@ -32,6 +32,10 @@ const MemberManager = () => {
     const [selectedRuleId, setSelectedRuleId] = useState(ruleSets[0]?.id || '');
     const [selectedLocationId, setSelectedLocationId] = useState(locations[0]?.id || '');
 
+    // Per-employee pay overrides (null = use shift default)
+    const [paidWeeklyOffs, setPaidWeeklyOffs] = useState(null);
+    const [paidHolidays, setPaidHolidays] = useState(null);
+
     // Image upload ref
     const imageInputRef = useRef(null);
     const [uploadingImageFor, setUploadingImageFor] = useState(null);
@@ -50,6 +54,8 @@ const MemberManager = () => {
         setIfsc('');
         setEditMode(false);
         setEditingId(null);
+        setPaidWeeklyOffs(null);
+        setPaidHolidays(null);
         if (ruleSets.length > 0) setSelectedRuleId(ruleSets[0].id);
         if (locations.length > 0) setSelectedLocationId(locations[0].id);
         if (locations.length === 0) setSelectedLocationId('');
@@ -70,6 +76,8 @@ const MemberManager = () => {
         setBankAccount(member.bankDetails?.accountNo || '');
         setIfsc(member.bankDetails?.ifsc || '');
         setSelectedLocationId(member.attendanceLocationId || '');
+        setPaidWeeklyOffs(member.paidWeeklyOffs ?? null);
+        setPaidHolidays(member.paidHolidays ?? null);
 
         if (member.ruleSetId) {
             setSelectedRuleId(member.ruleSetId);
@@ -101,6 +109,8 @@ const MemberManager = () => {
                 },
                 ruleSetId: selectedRuleId,
                 attendanceLocationId: selectedLocationId || null,
+                paidWeeklyOffs,
+                paidHolidays,
                 password: password || 'password123'
             };
 
@@ -296,6 +306,24 @@ const MemberManager = () => {
                             {ruleSets.map(r => (
                                 <option key={r.id} value={r.id}>{r.name} ({r.startTime} - {r.endTime})</option>
                             ))}
+                        </select>
+                    </div>
+
+                    {/* Per-Employee Pay Override */}
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Paid Weekly Offs</label>
+                        <select value={paidWeeklyOffs === null ? 'default' : paidWeeklyOffs ? 'yes' : 'no'} onChange={(e) => setPaidWeeklyOffs(e.target.value === 'default' ? null : e.target.value === 'yes')}>
+                            <option value="default">Use Shift Default</option>
+                            <option value="yes">Paid</option>
+                            <option value="no">Unpaid</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.5rem' }}>Paid Holidays</label>
+                        <select value={paidHolidays === null ? 'default' : paidHolidays ? 'yes' : 'no'} onChange={(e) => setPaidHolidays(e.target.value === 'default' ? null : e.target.value === 'yes')}>
+                            <option value="default">Use Shift Default</option>
+                            <option value="yes">Paid</option>
+                            <option value="no">Unpaid</option>
                         </select>
                     </div>
 

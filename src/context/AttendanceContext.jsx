@@ -14,7 +14,7 @@ export const AttendanceProvider = ({ children }) => {
   const [members, setMembers] = useState([]);
   const [records, setRecords] = useState({});
   const [loading, setLoading] = useState(true);
-  const [settings, setSettings] = useState({ ruleSets: [], locations: [], holidays: [] });
+  const [settings, setSettings] = useState({ ruleSets: [], locations: [], holidays: [], unpaidHolidays: [] });
 
   // Real-time Firestore listeners
   useEffect(() => {
@@ -35,7 +35,8 @@ export const AttendanceProvider = ({ children }) => {
       setSettings({
         ruleSets: data.ruleSets || [{ id: 'default', name: 'General Shift', minHalfDay: 4, minFullDay: 8 }],
         locations: data.locations || [],
-        holidays: data.holidays || []
+        holidays: data.holidays || [],
+        unpaidHolidays: data.unpaidHolidays || []
       });
       markReady();
     });

@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useAttendance } from '../context/AttendanceContext';
-import { FaCog, FaCalendarAlt, FaClock, FaPlus, FaTrash, FaMapMarkerAlt, FaCheck } from 'react-icons/fa';
+import { FaCog, FaCalendarAlt, FaClock, FaPlus, FaTrash, FaMapMarkerAlt, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 
 const Settings = () => {
     const { settings: contextSettings, updateSettings } = useAttendance();
     const [loading, setLoading] = useState(true);
     const [settings, setSettings] = useState({
         holidays: [],
+        unpaidHolidays: [],
         ruleSets: [],
         locations: []
     });
     const [newHoliday, setNewHoliday] = useState('');
+    const [newUnpaidHoliday, setNewUnpaidHoliday] = useState('');
     const [msg, setMsg] = useState('');
     const [activeTab, setActiveTab] = useState('rules');
 
@@ -18,6 +20,7 @@ const Settings = () => {
         // Load settings from context
         setSettings({
             holidays: contextSettings.holidays || [],
+            unpaidHolidays: contextSettings.unpaidHolidays || [],
             ruleSets: (contextSettings.ruleSets || [{
                 id: 'default',
                 name: 'General Shift',
@@ -56,6 +59,17 @@ const Settings = () => {
 
     const removeHoliday = (dateStr) => {
         setSettings({ ...settings, holidays: settings.holidays.filter(h => h !== dateStr) });
+    };
+
+    const addUnpaidHoliday = () => {
+        if (!newUnpaidHoliday) return;
+        if (settings.unpaidHolidays.includes(newUnpaidHoliday)) return;
+        setSettings({ ...settings, unpaidHolidays: [...settings.unpaidHolidays, newUnpaidHoliday].sort() });
+        setNewUnpaidHoliday('');
+    };
+
+    const removeUnpaidHoliday = (dateStr) => {
+        setSettings({ ...settings, unpaidHolidays: settings.unpaidHolidays.filter(h => h !== dateStr) });
     };
 
     const addRuleSet = () => {
@@ -309,9 +323,66 @@ const Settings = () => {
                                             color: 'var(--success)',
                                             fontWeight: '500'
                                         }}>
-                                            Weekly offs: {(rule.weeklyOffs || []).join(', ')} (Paid)
+                                            Weekly offs: {(rule.weeklyOffs || []).join(', ')} ({rule.paidWeeklyOffs !== false ? 'Paid' : 'Unpaid'})
                                         </div>
                                     )}
+                                </div>
+
+                                {/* Pay Settings */}
+                                <div style={{
+                                    borderTop: '1px solid var(--border-color)',
+                                    paddingTop: '1rem',
+                                    marginTop: '1rem'
+                                }}>
+                                    <label style={{
+                                        display: 'block',
+                                        fontSize: '0.875rem',
+                                        fontWeight: '600',
+                                        color: 'var(--text-primary)',
+                                        marginBottom: '0.75rem'
+                                    }}>
+                                        Pay Settings
+                                    </label>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                        <label style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.75rem',
+                                            cursor: 'pointer',
+                                            fontSize: '0.8125rem',
+                                            color: 'var(--text-secondary)'
+                                        }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={rule.paidWeeklyOffs !== false}
+                                                onChange={(e) => updateRuleSet(rule.id, 'paidWeeklyOffs', e.target.checked)}
+                                                style={{ width: '18px', height: '18px', accentColor: 'var(--primary)', cursor: 'pointer' }}
+                                            />
+                                            Paid Weekly Offs
+                                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', opacity: 0.7 }}>
+                                                — Count weekly offs as paid days in salary
+                                            </span>
+                                        </label>
+                                        <label style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.75rem',
+                                            cursor: 'pointer',
+                                            fontSize: '0.8125rem',
+                                            color: 'var(--text-secondary)'
+                                        }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={rule.paidHolidays !== false}
+                                                onChange={(e) => updateRuleSet(rule.id, 'paidHolidays', e.target.checked)}
+                                                style={{ width: '18px', height: '18px', accentColor: 'var(--primary)', cursor: 'pointer' }}
+                                            />
+                                            Paid Holidays
+                                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', opacity: 0.7 }}>
+                                                — Count global holidays as paid days in salary
+                                            </span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -361,6 +432,51 @@ const Settings = () => {
                                 </button>
                             </div>
                         ))}
+                    </div>
+
+                    {/* Unpaid Holidays */}
+                    <div style={{ marginTop: '2rem', borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
+                        <h3 style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)', fontSize: '1.125rem', fontWeight: '600' }}>
+                            <FaExclamationTriangle style={{ color: 'var(--danger)' }} /> Unpaid Holidays
+                        </h3>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>These dates will NOT count as paid days in salary calculations.</p>
+
+                        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+                            <input
+                                type="date"
+                                value={newUnpaidHoliday}
+                                onChange={(e) => setNewUnpaidHoliday(e.target.value)}
+                                style={{ flex: 1 }}
+                            />
+                            <button onClick={addUnpaidHoliday} className="btn-danger" style={{ whiteSpace: 'nowrap' }}>
+                                <FaPlus /> Add Unpaid Holiday
+                            </button>
+                        </div>
+
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                            {(settings.unpaidHolidays || []).length === 0 && <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>No unpaid holidays configured.</span>}
+
+                            {(settings.unpaidHolidays || []).map(date => (
+                                <div key={date} style={{
+                                    background: 'var(--danger-light)',
+                                    padding: '0.625rem 1rem',
+                                    borderRadius: 'var(--radius-full)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem',
+                                    border: '1px solid var(--danger)'
+                                }}>
+                                    <span style={{ color: 'var(--danger)', fontWeight: '500', fontSize: '0.875rem' }}>{date}</span>
+                                    <button
+                                        onClick={() => removeUnpaidHoliday(date)}
+                                        style={{ background: 'transparent', border: 'none', color: 'var(--danger)', padding: 0, cursor: 'pointer', fontSize: '1.125rem', lineHeight: 1, display: 'flex', alignItems: 'center' }}
+                                        title="Remove unpaid holiday"
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}

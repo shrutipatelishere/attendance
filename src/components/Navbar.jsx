@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaClipboardCheck, FaUsers, FaChartBar, FaUserCircle, FaMoneyBillWave, FaSignOutAlt, FaCog, FaExclamationTriangle, FaFileAlt, FaBars, FaTimes, FaCamera, FaHistory } from 'react-icons/fa';
+import { FaClipboardCheck, FaUsers, FaChartBar, FaUserCircle, FaMoneyBillWave, FaSignOutAlt, FaCog, FaExclamationTriangle, FaFileAlt, FaBars, FaTimes, FaCamera, FaHistory, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
@@ -28,6 +28,7 @@ const Navbar = () => {
             { id: 'dashboard', label: 'Dashboard', path: '/', icon: FaClipboardCheck },
             { id: 'staff', label: 'Staff', path: '/staff', icon: FaUsers },
             { id: 'requests', label: 'Requests', path: '/miss-punch-requests', icon: FaExclamationTriangle },
+            { id: 'leaves', label: 'Leaves', path: '/leave-requests', icon: FaCalendarAlt },
             { id: 'reports', label: 'Reports', path: '/reports', icon: FaFileAlt },
             { id: 'payroll', label: 'Payroll', path: '/payroll', icon: FaMoneyBillWave },
             { id: 'history', label: 'History', path: '/history', icon: FaChartBar },
@@ -150,11 +151,25 @@ const Navbar = () => {
                             <span>Miss Punch</span>
                         </Link>
                         <Link
+                            to="/employee?tab=leave"
+                            className={`bottom-nav-item ${location.search.includes('leave') ? 'active' : ''}`}
+                        >
+                            <FaCalendarAlt />
+                            <span>Leave</span>
+                        </Link>
+                        <Link
                             to="/employee?tab=history"
                             className={`bottom-nav-item ${location.search.includes('history') ? 'active' : ''}`}
                         >
                             <FaHistory />
                             <span>History</span>
+                        </Link>
+                        <Link
+                            to="/employee?tab=profile"
+                            className={`bottom-nav-item ${location.search.includes('profile') ? 'active' : ''}`}
+                        >
+                            <FaUserCircle />
+                            <span>Profile</span>
                         </Link>
                     </>
                 )}
