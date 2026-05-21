@@ -167,8 +167,7 @@ const MissPunch = () => {
                                 type="time"
                                 step="1"
                                 value={punchTime}
-                                onChange={(e) => setPunchTime(e.target.value + ':00')}
-                                placeholder="09:00:00"
+                                onChange={(e) => setPunchTime(e.target.value.length === 5 ? e.target.value + ':00' : e.target.value)}
                                 required
                             />
                         </div>

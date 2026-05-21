@@ -144,12 +144,15 @@ const Dashboard = () => {
         let status = 'present';
         if (!editPunchIn) status = 'absent';
 
+        // Time pickers may return HH:mm — normalize to HH:mm:ss for storage
+        const normTime = (t) => (t && t.length === 5 ? `${t}:00` : t) || null;
+
         const base = editingRecord && typeof editingRecord === 'object' ? editingRecord : {};
         const data = {
             ...base,
             status: status,
-            punchIn: editPunchIn || null,
-            punchOut: editPunchOut || null
+            punchIn: normTime(editPunchIn),
+            punchOut: normTime(editPunchOut)
         };
 
         if (!editPunchIn && !editPunchOut) {
@@ -297,21 +300,21 @@ const Dashboard = () => {
                                 </div>
                             )}
                             <div>
-                                <label htmlFor="punchIn">Punch In (HH:mm:ss)</label>
+                                <label htmlFor="punchIn">Punch In</label>
                                 <input
                                     id="punchIn"
-                                    type="text"
-                                    placeholder="09:00:00"
+                                    type="time"
+                                    step="1"
                                     value={editPunchIn}
                                     onChange={(e) => setEditPunchIn(e.target.value)}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="punchOut">Punch Out (HH:mm:ss)</label>
+                                <label htmlFor="punchOut">Punch Out</label>
                                 <input
                                     id="punchOut"
-                                    type="text"
-                                    placeholder="18:00:00"
+                                    type="time"
+                                    step="1"
                                     value={editPunchOut}
                                     onChange={(e) => setEditPunchOut(e.target.value)}
                                 />

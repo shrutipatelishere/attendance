@@ -101,13 +101,16 @@ const EmployeeDetail = () => {
         }
     };
 
+    // Time pickers may return HH:mm — normalize to HH:mm:ss for storage
+    const normTime = (t) => (t && t.length === 5 ? `${t}:00` : t) || null;
+
     const setPunch = (dateStr, field, value) => {
         const raw = getRaw(dateStr);
         const base = raw && typeof raw === 'object' ? raw : {};
         const next = {
             ...base,
             status: base.status || 'present',
-            [field]: value || null,
+            [field]: normTime(value),
         };
         if (!next.punchIn) next.status = 'absent';
         markAttendance(dateStr, lookupId, next);
@@ -274,16 +277,18 @@ const EmployeeDetail = () => {
                                     </div>
                                 </div>
 
-                                {/* Punch times */}
+                                {/* Punch times — time pickers, no manual typing */}
                                 <input
-                                    type="text" placeholder="In  09:00:00" defaultValue={punchIn} key={'in' + dateStr + punchIn}
-                                    onBlur={e => { if (e.target.value !== punchIn) setPunch(dateStr, 'punchIn', e.target.value.trim()); }}
-                                    style={{ width: '92px', fontFamily: 'monospace', fontSize: '0.75rem', padding: '0.3rem 0.4rem' }}
+                                    type="time" step="1" title="Punch In"
+                                    value={punchIn} key={'in' + dateStr + punchIn}
+                                    onChange={e => { if (e.target.value !== punchIn) setPunch(dateStr, 'punchIn', e.target.value); }}
+                                    style={{ width: '116px', fontSize: '0.75rem', padding: '0.3rem 0.4rem' }}
                                 />
                                 <input
-                                    type="text" placeholder="Out 18:00:00" defaultValue={punchOut} key={'out' + dateStr + punchOut}
-                                    onBlur={e => { if (e.target.value !== punchOut) setPunch(dateStr, 'punchOut', e.target.value.trim()); }}
-                                    style={{ width: '92px', fontFamily: 'monospace', fontSize: '0.75rem', padding: '0.3rem 0.4rem' }}
+                                    type="time" step="1" title="Punch Out"
+                                    value={punchOut} key={'out' + dateStr + punchOut}
+                                    onChange={e => { if (e.target.value !== punchOut) setPunch(dateStr, 'punchOut', e.target.value); }}
+                                    style={{ width: '116px', fontSize: '0.75rem', padding: '0.3rem 0.4rem' }}
                                 />
 
                                 {/* Status badge — effective status (auto-Absent for past unmarked) */}
