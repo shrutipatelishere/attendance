@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useAttendance } from '../context/AttendanceContext';
-import { FaUserPlus, FaTrash, FaEdit, FaCheck, FaCamera, FaUser, FaKey } from 'react-icons/fa';
+import { FaUserPlus, FaTrash, FaEdit, FaCheck, FaCamera, FaUser, FaKey, FaCalendarAlt, FaChevronDown } from 'react-icons/fa';
 import { fsCreateAuthUser, fsChangeUserPassword, fsSendPasswordReset } from '../firestoreService';
 
 const MemberManager = () => {
@@ -17,6 +18,9 @@ const MemberManager = () => {
     // Edit Mode State
     const [editMode, setEditMode] = useState(false);
     const [editingId, setEditingId] = useState(null);
+
+    // Collapsible form ("Add New Staff" dropdown)
+    const [formOpen, setFormOpen] = useState(false);
 
     // Extended Details
     const [phone, setPhone] = useState('');
@@ -64,6 +68,7 @@ const MemberManager = () => {
     const handleEdit = (member) => {
         setEditMode(true);
         setEditingId(member.id);
+        setFormOpen(true);
 
         setName(member.name || '');
         setEmail(member.email || '');
@@ -204,16 +209,22 @@ const MemberManager = () => {
             />
 
             <div className="glass-panel" style={{ marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <h3 className="text-gradient" style={{ margin: 0 }}>
+                <div
+                    onClick={() => setFormOpen(o => !o)}
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: formOpen ? '1rem' : 0, cursor: 'pointer' }}
+                >
+                    <h3 className="text-gradient" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <FaChevronDown style={{ fontSize: '0.85rem', transition: 'transform 0.2s', transform: formOpen ? 'rotate(180deg)' : 'none' }} />
                         {editMode ? 'Edit Staff Details' : 'Add New Staff & Create Login'}
                     </h3>
                     {editMode && (
-                        <button onClick={resetForm} style={{ fontSize: '0.8rem', background: 'transparent', border: '1px solid var(--text-secondary)', color: 'var(--text-secondary)', padding: '0.3rem 0.6rem', borderRadius: '4px', cursor: 'pointer' }}>
+                        <button onClick={(e) => { e.stopPropagation(); resetForm(); setFormOpen(false); }} style={{ fontSize: '0.8rem', background: 'transparent', border: '1px solid var(--text-secondary)', color: 'var(--text-secondary)', padding: '0.3rem 0.6rem', borderRadius: '4px', cursor: 'pointer' }}>
                             Cancel Edit
                         </button>
                     )}
                 </div>
+
+                {formOpen && <div>
 
                 {msg && <div style={{
                     padding: '0.8rem',
@@ -371,6 +382,8 @@ const MemberManager = () => {
                         </button>
                     </div>
                 </form>
+
+                </div>}
             </div>
 
             <div className="glass-panel" style={{ padding: 0, overflow: 'hidden' }}>
@@ -435,7 +448,11 @@ const MemberManager = () => {
                                             </div>
                                         </div>
                                     </td>
-                                    <td style={{ padding: '1rem', fontWeight: 500 }}>{member.name}</td>
+                                    <td style={{ padding: '1rem', fontWeight: 500 }}>
+                                        <Link to={`/staff/${member.id}`} style={{ color: 'var(--primary)', textDecoration: 'none' }}>
+                                            {member.name}
+                                        </Link>
+                                    </td>
                                     <td style={{ padding: '1rem' }}>
                                         <span style={{
                                             background: 'var(--primary-light)',
@@ -454,10 +471,15 @@ const MemberManager = () => {
                                         {locations.find(l => l.id === member.attendanceLocationId)?.name || '-'}
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'right', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                                        <Link to={`/staff/${member.id}`} title="Open & manage month attendance">
+                                            <button className="btn-secondary" style={{ padding: '0.5rem', minWidth: 'unset' }}>
+                                                <FaCalendarAlt />
+                                            </button>
+                                        </Link>
                                         <button
                                             onClick={() => handleEdit(member)}
                                             className="btn-secondary" style={{ padding: '0.5rem', minWidth: 'unset' }}
-                                            title="Edit Staff"
+                                            title="Quick edit (inline form)"
                                         >
                                             <FaEdit />
                                         </button>

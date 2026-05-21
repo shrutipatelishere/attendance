@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useAttendance } from '../context/AttendanceContext';
-import { format, parse, differenceInMinutes, getDay } from 'date-fns';
+import { format, parse, differenceInMinutes, getDay, startOfDay, isBefore, isSameDay } from 'date-fns';
 import { FaCheckCircle, FaTimesCircle, FaClock, FaUserMinus, FaUndo, FaUsers, FaPlus, FaExclamationCircle, FaEdit, FaSave, FaTimes, FaCamera, FaImage } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-    const { members, markAttendance, resetAttendance, getDayStatus, getStats, markAll, calculateDetailedStatus, settings, updateSettings, updateMember } = useAttendance();
+    const { members, markAttendance, clearAttendance, getDayStatus, getStats, markAll, calculateDetailedStatus, settings, updateSettings, updateMember } = useAttendance();
     const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
 
     // Edit Modal State
@@ -47,22 +47,14 @@ const Dashboard = () => {
     };
 
     const getDetailedStatus = (member, raw) => {
-        // Check per-employee unpaid holiday first
-        if (isEmployeeUnpaidHoliday(member)) {
-            return { status: 'holiday', label: 'Holiday (Unpaid)', color: 'var(--text-secondary)' };
+        // An explicit attendance mark (admin P/A, edited times, or employee punch)
+        // always wins over computed holiday / weekly-off display.
+        const hasExplicitMark = raw !== undefined && raw !== null && raw !== '';
+        if (hasExplicitMark) {
+            return calculateDetailedStatus(raw, member.ruleSetId);
         }
 
-        // Check if it's a global unpaid holiday
-        if (isUnpaidHoliday) {
-            return { status: 'holiday', label: 'Holiday (Unpaid)', color: 'var(--text-secondary)' };
-        }
-
-        // Check if it's a global paid holiday
-        if (isGlobalHoliday) {
-            return { status: 'holiday', label: 'Holiday (Paid)', color: 'var(--success)' };
-        }
-
-        // Check if it's a weekly off for this member
+        // Resolve this member's rule set (for weekly-offs & pay defaults)
         let memberRule = null;
         if (settings?.ruleSets && member.ruleSetId) {
             memberRule = settings.ruleSets.find(r => r.id === member.ruleSetId);
@@ -71,21 +63,59 @@ const Dashboard = () => {
             memberRule = settings.ruleSets[0];
         }
 
-        if (memberRule?.weeklyOffs && memberRule.weeklyOffs.length > 0) {
-            const dayOfWeek = getDay(new Date(selectedDate));
-            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const dayName = dayNames[dayOfWeek];
+        // Pay setting: per-employee override > rule set > default (paid)
+        const isPaidHoliday = member.paidHolidays !== null && member.paidHolidays !== undefined
+            ? member.paidHolidays : memberRule?.paidHolidays !== false;
+        const isPaidWeeklyOff = member.paidWeeklyOffs !== null && member.paidWeeklyOffs !== undefined
+            ? member.paidWeeklyOffs : memberRule?.paidWeeklyOffs !== false;
 
+        // Per-employee or global unpaid holiday
+        if (isEmployeeUnpaidHoliday(member) || isUnpaidHoliday) {
+            return { status: 'holiday', label: 'Holiday (Unpaid)', color: 'var(--text-secondary)' };
+        }
+
+        // Global holiday — paid/unpaid per settings
+        if (isGlobalHoliday) {
+            return {
+                status: 'holiday',
+                label: isPaidHoliday ? 'Holiday (Paid)' : 'Holiday (Unpaid)',
+                color: isPaidHoliday ? 'var(--success)' : 'var(--text-secondary)'
+            };
+        }
+
+        // Weekly off — paid/unpaid per settings
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        if (memberRule?.weeklyOffs?.length > 0) {
+            const dayName = dayNames[getDay(new Date(selectedDate))];
             if (memberRule.weeklyOffs.includes(dayName)) {
-                return { status: 'weeklyoff', label: 'Weekly Off (Paid)', color: 'var(--success)' };
+                return {
+                    status: 'weeklyoff',
+                    label: isPaidWeeklyOff ? 'Weekly Off (Paid)' : 'Weekly Off (Unpaid)',
+                    color: isPaidWeeklyOff ? 'var(--success)' : 'var(--text-secondary)'
+                };
             }
         }
 
-        return calculateDetailedStatus(raw, member.ruleSetId);
+        // Normal working day with no record:
+        //  - today or earlier  → Absent
+        //  - future            → Unmarked
+        const dateObj = new Date(selectedDate);
+        const todayStart = startOfDay(new Date());
+        const isPastOrToday = isBefore(dateObj, todayStart) || isSameDay(dateObj, todayStart);
+        if (isPastOrToday) {
+            return { status: 'absent', label: 'Absent', color: 'var(--color-absent)' };
+        }
+        return { status: '', label: 'Unmarked', color: 'var(--text-secondary)' };
     };
 
     const forceMark = (id, status) => {
         markAttendance(selectedDate, id, status);
+    };
+
+    const undoMark = (id) => {
+        if (window.confirm('Reset attendance for this user? This will clear punch times.')) {
+            clearAttendance(selectedDate, id);
+        }
     };
 
     const openEdit = (member, raw) => {
@@ -124,7 +154,7 @@ const Dashboard = () => {
 
         if (!editPunchIn && !editPunchOut) {
             if (window.confirm("Clear all data for this user?")) {
-                resetAttendance(selectedDate, editingMember.uid || editingMember.id);
+                clearAttendance(selectedDate, editingMember.uid || editingMember.id);
                 closeEdit();
                 return;
             }
@@ -524,12 +554,6 @@ const Dashboard = () => {
             </div>
         </div>
     );
-
-    function undoMark(id) {
-        if (window.confirm('Reset attendance for this user? This will clear punch times.')) {
-            resetAttendance(selectedDate, id);
-        }
-    }
 };
 
 export default Dashboard;

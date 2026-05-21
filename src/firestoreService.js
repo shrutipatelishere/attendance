@@ -84,6 +84,15 @@ export async function fsMarkAttendance(dateStr, memberId, data) {
   await setDoc(ref, existing);
 }
 
+export async function fsClearAttendance(dateStr, memberId) {
+  const ref = doc(db, 'attendance', dateStr);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return;
+  const existing = snap.data();
+  delete existing[memberId];
+  await setDoc(ref, existing);
+}
+
 export async function fsMarkAllAttendance(dateStr, memberIds, status) {
   const ref = doc(db, 'attendance', dateStr);
   const snap = await getDoc(ref);

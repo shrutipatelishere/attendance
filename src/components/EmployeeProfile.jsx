@@ -1,13 +1,19 @@
 import React, { useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useAttendance } from '../context/AttendanceContext';
-import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCamera } from 'react-icons/fa';
+import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCamera, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 
 const EmployeeProfile = () => {
     const { currentUser } = useAuth();
-    const { getMemberByUid, updateMemberImage } = useAttendance();
+    const { getMemberByUid, updateMemberImage, updateMember } = useAttendance();
     const imageInputRef = useRef(null);
     const [uploading, setUploading] = useState(false);
+
+    // Inline edit state for personal info
+    const [editing, setEditing] = useState(false);
+    const [form, setForm] = useState({ name: '', phone: '', address: '' });
+    const [saving, setSaving] = useState(false);
+    const [msg, setMsg] = useState('');
 
     const profile = getMemberByUid(currentUser.uid);
 
@@ -39,6 +45,33 @@ const EmployeeProfile = () => {
         reader.onerror = () => reject(new Error('File read failed'));
         reader.readAsDataURL(file);
     });
+
+    const startEdit = () => {
+        setForm({
+            name: profile.name || '',
+            phone: profile.phone || '',
+            address: profile.address || '',
+        });
+        setMsg('');
+        setEditing(true);
+    };
+
+    const saveProfile = async () => {
+        setSaving(true);
+        setMsg('');
+        try {
+            await updateMember(profile.id, {
+                name: form.name,
+                phone: form.phone,
+                address: form.address,
+            });
+            setEditing(false);
+        } catch (err) {
+            console.error('Error saving profile:', err);
+            setMsg('Could not save. Please try again.');
+        }
+        setSaving(false);
+    };
 
     const handleImageChange = async (e) => {
         const file = e.target.files?.[0];
@@ -160,12 +193,63 @@ const EmployeeProfile = () => {
 
             {/* Personal Info */}
             <div className="glass-panel" style={{ marginBottom: '1rem' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                    Personal Information
-                </h3>
-                <InfoRow icon={FaEnvelope} label="Email" value={profile.email} />
-                <InfoRow icon={FaPhone} label="Phone" value={profile.phone} />
-                <InfoRow icon={FaMapMarkerAlt} label="Address" value={profile.address} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                        Personal Information
+                    </h3>
+                    {!editing && (
+                        <button
+                            onClick={startEdit}
+                            className="btn-secondary"
+                            style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                        >
+                            <FaEdit /> Edit
+                        </button>
+                    )}
+                </div>
+
+                {msg && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-absent)', marginBottom: '0.75rem' }}>{msg}</div>
+                )}
+
+                {editing ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', paddingTop: '0.5rem' }}>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>Full Name</label>
+                            <input type="text" value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>Phone</label>
+                            <input type="tel" value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+91 99999..." />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>Address</label>
+                            <input type="text" value={form.address} onChange={(e) => setForm(f => ({ ...f, address: e.target.value }))} placeholder="Flat, Street, City..." />
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                            Email is your login ID and can only be changed by an admin.
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button onClick={saveProfile} disabled={saving} className="btn-success" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                                <FaSave /> {saving ? 'Saving...' : 'Save'}
+                            </button>
+                            <button onClick={() => setEditing(false)} disabled={saving} className="btn-secondary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                                <FaTimes /> Cancel
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <InfoRow icon={FaEnvelope} label="Email" value={profile.email} />
+                        <InfoRow icon={FaPhone} label="Phone" value={profile.phone} />
+                        <InfoRow icon={FaMapMarkerAlt} label="Address" value={profile.address} />
+                        {!profile.phone && !profile.address && (
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', padding: '0.75rem 0' }}>
+                                No phone or address added yet. Tap Edit to add.
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
 
         </div>

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   fsAddStaff, fsUpdateStaff, fsRemoveStaff, fsUpdateStaffImage,
-  fsMarkAttendance, fsMarkAllAttendance, fsSaveSettings,
+  fsMarkAttendance, fsMarkAllAttendance, fsClearAttendance, fsSaveSettings,
   subscribeStaff, subscribeAttendance, subscribeSettings
 } from '../firestoreService';
 import { parse, differenceInMinutes } from 'date-fns';
@@ -82,6 +82,11 @@ export const AttendanceProvider = ({ children }) => {
 
   const resetAttendance = async (dateStr, memberId) => {
     await fsMarkAttendance(dateStr, memberId, 'absent');
+  };
+
+  // Fully removes a member's record for the day (back to "Unmarked")
+  const clearAttendance = async (dateStr, memberId) => {
+    await fsClearAttendance(dateStr, memberId);
   };
 
   const markAttendance = async (dateStr, memberId, data) => {
@@ -180,6 +185,7 @@ export const AttendanceProvider = ({ children }) => {
       records,
       markAttendance,
       resetAttendance,
+      clearAttendance,
       getDayStatus,
       getStats,
       markAll,

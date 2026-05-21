@@ -4,6 +4,7 @@ import { AttendanceProvider } from './context/AttendanceContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
+import EmployeeDetail from './components/EmployeeDetail';
 import Landing from './components/Landing';
 import MemberManager from './components/MemberManager';
 import History from './components/History';
@@ -83,6 +84,14 @@ function App() {
               <PrivateRoute requireAdmin={true}>
                 <Layout>
                   <MemberManager />
+                </Layout>
+              </PrivateRoute>
+            } />
+
+            <Route path="/staff/:id" element={
+              <PrivateRoute requireAdmin={true}>
+                <Layout>
+                  <EmployeeDetail />
                 </Layout>
               </PrivateRoute>
             } />
