@@ -13,7 +13,7 @@ import {
 } from 'react-icons/fa';
 import './Landing.css';
 
-const whatsappHref = 'https://wa.me/918600574836?text=Hi%20I%27m%20interested%20in%20the%20attendance%20software.';
+const whatsappHref = 'https://wa.me/918767703919?text=Hi%20I%27m%20interested%20in%20the%20attendance%20software.';
 
 const featureList = [
     {
@@ -96,7 +96,7 @@ const Landing = () => {
                 <div className="landing-nav-actions">
                     <a href="#features" className="landing-link">Features</a>
                     <a href="#how-it-works" className="landing-link">How it works</a>
-                    <a href={whatsappHref} className="landing-button primary">WhatsApp 8600574836</a>
+                    <a href={whatsappHref} className="landing-button primary">WhatsApp 8767703919</a>
                 </div>
             </header>
 
@@ -116,7 +116,7 @@ const Landing = () => {
                         </p>
                         <div className="landing-cta">
                             <a href={whatsappHref} className="landing-button primary">
-                                WhatsApp 8600574836
+                                WhatsApp 8767703919
                             </a>
                             <a href={whatsappHref} className="landing-button ghost">
                                 Attendance software demo
@@ -240,7 +240,7 @@ const Landing = () => {
                         </p>
                     </div>
                     <a href={whatsappHref} className="landing-button primary">
-                        WhatsApp 8600574836 - Attendance software
+                        WhatsApp 8767703919 - Attendance software
                     </a>
                 </section>
             </main>
